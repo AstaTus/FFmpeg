@@ -98,4 +98,14 @@ int av_mediacodec_release_buffer(AVMediaCodecBuffer *buffer, int render);
  */
 int av_mediacodec_render_buffer_at_time(AVMediaCodecBuffer *buffer, int64_t time);
 
+/**
+ * check mediacodec is support specified codec_id and pixel format or not
+ *
+ * @param codec_id the codec type
+ * @param pix_fmt the pixel format
+ * @param is_encoder true is find support encode codec false is find support decodec codec
+ * @param profile encode profile just usboed for encoder
+ * @return 0 on success, < 0 otherwise
+ */
+int av_mediacodec_support_codec(enum AVCodecID codec_id, enum AVPixelFormat pix_fmt, int is_encoder, int profile);
 #endif /* AVCODEC_MEDIACODEC_H */
