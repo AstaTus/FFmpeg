@@ -581,8 +581,7 @@ av_cold int avcodec_close(AVCodecContext *avctx)
         }
         if (HAVE_THREADS && avctx->internal->thread_ctx)
             ff_thread_free(avctx);
-        if (avctx->codec && avctx->codec->close)
-            avctx->codec->close(avctx);
+
         avctx->internal->byte_buffer_size = 0;
         av_freep(&avctx->internal->byte_buffer);
 #if FF_API_OLD_ENCDEC
@@ -608,6 +607,9 @@ av_cold int avcodec_close(AVCodecContext *avctx)
         av_frame_free(&avctx->internal->es.in_frame);
 
         av_buffer_unref(&avctx->internal->pool);
+
+        if (avctx->codec && avctx->codec->close)
+            avctx->codec->close(avctx);
 
         if (avctx->hwaccel && avctx->hwaccel->uninit)
             avctx->hwaccel->uninit(avctx);
