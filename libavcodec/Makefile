@@ -16,7 +16,12 @@ HEADERS = ac3_parser.h                                                  \
           dv_profile.h                                                  \
           dxva2.h                                                       \
           jni.h                                                         \
+	  ffjni.h                                                       \
           mediacodec.h                                                  \
+	  mediacodec_surface.h                                          \
+	  mediacodec_sw_buffer.h                                        \
+	  mediacodec_wrapper.h                                          \
+	  mediacodecdec_common.h                                        \
           packet.h                                                      \
           qsv.h                                                         \
           vaapi.h                                                       \
