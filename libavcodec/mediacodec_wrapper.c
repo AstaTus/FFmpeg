@@ -1433,6 +1433,12 @@ int ff_AMediaCodec_releaseOutputBuffer(FFAMediaCodec* codec, size_t idx, int ren
     JNIEnv *env = NULL;
 
     JNI_GET_ENV_OR_RETURN(env, codec, AVERROR_EXTERNAL);
+    if (codec == NULL) {
+//        av_log(NULL, AV_LOG_DEBUG,
+//               "codec already release so buffer doesn't need call release output buffer index=%zd\n", idx);
+        ret = AVERROR_EXTERNAL;
+        goto fail;
+    }
 
     (*env)->CallVoidMethod(env, codec->object, codec->jfields.release_output_buffer_id, (jint)idx, (jboolean)render);
     if (ff_jni_exception_check(env, 1, codec) < 0) {
