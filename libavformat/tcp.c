@@ -23,6 +23,7 @@
 #include "libavutil/parseutils.h"
 #include "libavutil/opt.h"
 #include "libavutil/time.h"
+#include "libavutil/avprotocol_event_dispatcher.h"
 
 #include "internal.h"
 #include "network.h"
@@ -31,6 +32,7 @@
 #if HAVE_POLL_H
 #include <poll.h>
 #endif
+
 
 typedef struct TCPContext {
     const AVClass *class;
@@ -45,6 +47,8 @@ typedef struct TCPContext {
 #if !HAVE_WINSOCK2_H
     int tcp_mss;
 #endif /* !HAVE_WINSOCK2_H */
+    uint64_t protocol_event_context_ptr;
+    AVProtocolEventDispatcherContext * protocol_event_dispatcher_context;
 } TCPContext;
 
 #define OFFSET(x) offsetof(TCPContext, x)
@@ -60,6 +64,7 @@ static const AVOption options[] = {
 #if !HAVE_WINSOCK2_H
     { "tcp_mss",     "Maximum segment size for outgoing TCP packets",          OFFSET(tcp_mss),     AV_OPT_TYPE_INT, { .i64 = -1 },         -1, INT_MAX, .flags = D|E },
 #endif /* !HAVE_WINSOCK2_H */
+    { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr), AV_OPT_TYPE_UINT64, { .i64 = 0 }, 0, UINT64_MAX, .flags = D|E },
     { NULL }
 };
 
@@ -69,6 +74,73 @@ static const AVClass tcp_class = {
     .option     = options,
     .version    = LIBAVUTIL_VERSION_INT,
 };
+
+static const char * tcp_protocol_name = "tcp";
+
+static int on_tcp_open_start(AVProtocolEventDispatcherContext * hdispatcher, AVTcpEvent * hevent)
+{
+    if (hdispatcher != NULL && hevent != NULL) {
+        hdispatcher->on_protocol_event(hdispatcher, AVPROTOCOL_EVENT_START_OPEN, tcp_protocol_name, hevent);
+    }
+
+    return 0;
+}
+
+static void on_tcp_read(AVProtocolEventDispatcherContext * hdispatcher, URLContext *hurl, int bytes)
+{
+    AVIOTrafficEvent traffic_event = {0};
+    if (!hdispatcher || !hurl || bytes <= 0)
+        return;
+    traffic_event.obj        = hurl;
+    traffic_event.bytes      = bytes;
+
+    if (hdispatcher->on_protocol_event != NULL) {
+        hdispatcher->on_protocol_event(hdispatcher, AVPROTOCOL_EVENT_READING, tcp_protocol_name, &traffic_event);
+    }
+}
+
+static int on_tcp_open_end(AVProtocolEventDispatcherContext * hdispatcher, int error, int fd, AVTcpEvent * hevent)
+{
+    struct sockaddr_storage so_stg;
+    int       ret = 0;
+    socklen_t so_len = sizeof(so_stg);
+    int       so_family;
+    char      *so_ip_name = hevent->ip;
+
+    if (!hdispatcher || !hdispatcher->on_protocol_event || fd <= 0)
+        return 0;
+
+    ret = getpeername(fd, (struct sockaddr *)&so_stg, &so_len);
+    if (ret)
+        return 0;
+    hevent->error = error;
+    hevent->fd = fd;
+
+    so_family = ((struct sockaddr*)&so_stg)->sa_family;
+    switch (so_family) {
+        case AF_INET: {
+            struct sockaddr_in* in4 = (struct sockaddr_in*)&so_stg;
+            if (inet_ntop(AF_INET, &(in4->sin_addr), so_ip_name, sizeof(hevent->ip))) {
+                hevent->family = AF_INET;
+                hevent->port = in4->sin_port;
+            }
+            break;
+        }
+        case AF_INET6: {
+            struct sockaddr_in6* in6 = (struct sockaddr_in6*)&so_stg;
+            if (inet_ntop(AF_INET6, &(in6->sin6_addr), so_ip_name, sizeof(hevent->ip))) {
+                hevent->family = AF_INET6;
+                hevent->port = in6->sin6_port;
+            }
+            break;
+        }
+    }
+
+
+    return hdispatcher->on_protocol_event(hdispatcher, AVPROTOCOL_EVENT_END_OPEN, tcp_protocol_name, hevent);
+
+}
+
 
 static void customize_fd(void *ctx, int fd)
 {
@@ -110,7 +182,10 @@ static int tcp_open(URLContext *h, const char *uri, int flags)
     int ret;
     char hostname[1024],proto[1024],path[1024];
     char portstr[10];
+    AVTcpEvent tcp_protocol_event = {0};
     s->open_timeout = 5000000;
+
+    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext*)s->protocol_event_context_ptr;
 
     av_url_split(proto, sizeof(proto), NULL, 0, hostname, sizeof(hostname),
         &port, path, sizeof(path), uri);
@@ -195,7 +270,13 @@ static int tcp_open(URLContext *h, const char *uri, int flags)
         // Socket descriptor already closed here. Safe to overwrite to client one.
         fd = ret;
     } else {
+        on_tcp_open_start(s->protocol_event_dispatcher_context, &tcp_protocol_event);
+
         ret = ff_connect_parallel(ai, s->open_timeout / 1000, 3, h, &fd, customize_fd, s);
+        if (on_tcp_open_end(s->protocol_event_dispatcher_context, ret, fd, &tcp_protocol_event))
+        {
+            goto fail1;
+        }
         if (ret < 0)
             goto fail1;
     }
@@ -244,6 +325,9 @@ static int tcp_read(URLContext *h, uint8_t *buf, int size)
     ret = recv(s->fd, buf, size, 0);
     if (ret == 0)
         return AVERROR_EOF;
+    if (ret > 0)
+        on_tcp_read(s->protocol_event_dispatcher_context, (void*)h, ret);
+
     return ret < 0 ? ff_neterrno() : ret;
 }
 

@@ -31,6 +31,7 @@
 #include "libavutil/opt.h"
 #include "libavutil/time.h"
 #include "libavutil/parseutils.h"
+#include "libavutil/avprotocol_event_dispatcher.h"
 
 #include "avformat.h"
 #include "http.h"
@@ -58,6 +59,54 @@ typedef enum {
     WRITE_REPLY_HEADERS,
     FINISH
 }HandshakeState;
+
+static const char * http_protocol_name = "http";
+static const char * https_protocol_name = "https";
+static const char * http_proxy_protocol_name = "httpproxy";
+
+static void on_http_open_start(AVProtocolEventDispatcherContext * hdispatcher, const char * url)
+{
+    AVHttpEvent event = {0};
+    av_strlcpy(event.url, url, sizeof(event.url));
+    av_protocol_event_start_open(hdispatcher, http_protocol_name, &event);
+}
+
+static void on_http_open_end(AVProtocolEventDispatcherContext * hdispatcher, const char *url, int error, int http_code, int64_t filesize)
+{
+    AVHttpEvent event = {0};
+    av_strlcpy(event.url, url, sizeof(event.url));
+    event.error = error;
+    event.http_code = http_code;
+    event.filesize = filesize;
+    av_protocol_event_end_open(hdispatcher, http_protocol_name, &event);
+}
+
+static void on_http_start_seek(AVProtocolEventDispatcherContext * hdispatcher, const char *url, int64_t offset)
+{
+    AVHttpEvent event = {0};
+    av_strlcpy(event.url, url, sizeof(event.url));
+    event.offset = offset;
+    av_protocol_event_start_seek(hdispatcher, http_protocol_name, &event);
+}
+
+static void on_http_end_seek(AVProtocolEventDispatcherContext * hdispatcher, const char *url, int64_t offset, int error, int http_code)
+{
+    AVHttpEvent event = {0};
+    av_strlcpy(event.url, url, sizeof(event.url));
+    event.offset = offset;
+    event.error     = error;
+    event.http_code = http_code;
+
+    av_protocol_event_end_seek(hdispatcher, http_protocol_name, &event);
+}
+
+static void on_http_read(AVProtocolEventDispatcherContext * hdispatcher, int bytes)
+{
+    AVIOTrafficEvent event = {0};
+    event.bytes = bytes;
+    av_protocol_io_traffic_event_reading(hdispatcher, http_protocol_name, &event);
+}
+
 
 typedef struct HTTPContext {
     const AVClass *class;
@@ -126,6 +175,8 @@ typedef struct HTTPContext {
     int is_multi_client;
     HandshakeState handshake_step;
     int is_connected_server;
+    uint64_t protocol_event_context_ptr;
+    AVProtocolEventDispatcherContext * protocol_event_dispatcher_context;
 } HTTPContext;
 
 #define OFFSET(x) offsetof(HTTPContext, x)
@@ -170,6 +221,7 @@ static const AVOption options[] = {
     { "listen", "listen on HTTP", OFFSET(listen), AV_OPT_TYPE_INT, { .i64 = 0 }, 0, 2, D | E },
     { "resource", "The resource requested by a client", OFFSET(resource), AV_OPT_TYPE_STRING, { .str = NULL }, 0, 0, E },
     { "reply_code", "The http status code to return to a client", OFFSET(reply_code), AV_OPT_TYPE_INT, { .i64 = 200}, INT_MIN, 599, E},
+    { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr), AV_OPT_TYPE_UINT64, { .i64 = 0 }, 0, UINT64_MAX, .flags = D|E },
     { NULL }
 };
 
@@ -616,6 +668,7 @@ static int http_open(URLContext *h, const char *uri, int flags,
 {
     HTTPContext *s = h->priv_data;
     int ret;
+    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *) s->protocol_event_context_ptr;
 
     if( s->seekable == 1 )
         h->is_streamed = 0;
@@ -646,7 +699,9 @@ static int http_open(URLContext *h, const char *uri, int flags,
     if (s->listen) {
         return http_listen(h, uri, flags, options);
     }
+    on_http_open_start(s->protocol_event_dispatcher_context, uri);
     ret = http_open_cnx(h, options);
+    on_http_open_end(s->protocol_event_dispatcher_context, uri, ret, s->http_code, s->filesize);
 bail_out:
     if (ret < 0)
         av_dict_free(&s->chained_options);
@@ -1489,6 +1544,7 @@ static int http_buf_read(URLContext *h, uint8_t *buf, int size)
         if ((!s->willclose || s->chunksize == UINT64_MAX) && s->off >= target_end)
             return AVERROR_EOF;
         len = ffurl_read(s->hd, buf, size);
+        on_http_read(s->protocol_event_dispatcher_context, len);
         if ((!len || len == AVERROR_EOF) &&
             (!s->willclose || s->chunksize == UINT64_MAX) && s->off < target_end) {
             av_log(h, AV_LOG_ERROR,
@@ -1812,8 +1868,10 @@ static int64_t http_seek_internal(URLContext *h, int64_t off, int whence, int fo
     memcpy(old_buf, s->buf_ptr, old_buf_size);
     s->hd = NULL;
 
+    on_http_start_seek(s->protocol_event_dispatcher_context, s->location, off);
     /* if it fails, continue on old connection */
     if ((ret = http_open_cnx(h, &options)) < 0) {
+        on_http_end_seek(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
         av_dict_free(&options);
         memcpy(s->buffer, old_buf, old_buf_size);
         s->buf_ptr = s->buffer;
@@ -1822,6 +1880,7 @@ static int64_t http_seek_internal(URLContext *h, int64_t off, int whence, int fo
         s->off     = old_off;
         return ret;
     }
+    on_http_end_seek(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
     av_dict_free(&options);
     ffurl_close(old_hd);
     return off;
@@ -1913,6 +1972,8 @@ static int http_proxy_open(URLContext *h, const char *uri, int flags)
     HTTPAuthType cur_auth_type;
     char *authstr;
     int new_loc;
+
+    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *)(s->protocol_event_context_ptr);
 
     if( s->seekable == 1 )
         h->is_streamed = 0;

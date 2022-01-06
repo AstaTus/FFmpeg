@@ -48,6 +48,7 @@
 #include "libavutil/opt.h"
 #include "libavcodec/avfft.h"
 #include "libswresample/swresample.h"
+#include "libavutil/avprotocol_event_dispatcher.h"
 
 #if CONFIG_AVFILTER
 # include "libavfilter/avfilter.h"
@@ -57,7 +58,7 @@
 
 #include <SDL.h>
 #include <SDL_thread.h>
-
+#include "libavutil/avprotocol_event_dispatcher.h"
 #include "cmdutils.h"
 
 #include <assert.h>
@@ -356,6 +357,9 @@ static char *afilters = NULL;
 static int autorotate = 1;
 static int find_stream_info = 1;
 static int filter_nbthreads = 0;
+
+static AVProtocolEventDispatcherContext *pprotocol_event_dispatcher_context = NULL;
+
 
 /* current context */
 static int is_full_screen;
@@ -2793,6 +2797,8 @@ static int read_thread(void *arg)
         av_dict_set(&format_opts, "scan_all_pmts", "1", AV_DICT_DONT_OVERWRITE);
         scan_all_pmts_set = 1;
     }
+
+    av_dict_set_int(&format_opts, "protocol_event_dispatcher", (int64_t)(intptr_t)pprotocol_event_dispatcher_context, 0);
     err = avformat_open_input(&ic, is->filename, is->iformat, &format_opts);
     if (err < 0) {
         print_error(is->filename, err);
@@ -3679,11 +3685,49 @@ void show_help_default(const char *opt, const char *arg)
            );
 }
 
+static int on_ffplay_protocol_event(AVProtocolEventDispatcherContext *h, int event_type, const char * protocol_name, void * event)
+{
+    if (event_type == AVPROTOCOL_EVENT_START_OPEN) {
+        if (strcmp(protocol_name, "http") == 0) {
+            av_log(NULL, AV_LOG_INFO, "http start open url=%s\n", ((AVHttpEvent*)event)->url);
+        } else if (strcmp(protocol_name, "tcp") == 0) {
+            AVTcpEvent* ev = (AVTcpEvent*)event;
+            av_log(NULL, AV_LOG_INFO, "tcp start open ip=%s port=%d\n", ev->ip, ev->port);
+        }
+    } else if (event_type == AVPROTOCOL_EVENT_END_OPEN) {
+        if (strcmp(protocol_name, "http") == 0) {
+            AVHttpEvent* ev = (AVHttpEvent*)event;
+            av_log(NULL, AV_LOG_INFO, "http end open url=%s error_code=%d error=%d filesize=%lld\n",
+                   ev->url, ev->http_code, ev->error, ev->filesize);
+        } else if (strcmp(protocol_name, "tcp") == 0) {
+            AVTcpEvent* ev = (AVTcpEvent*)event;
+            av_log(NULL, AV_LOG_INFO, "tcp start open ip=%s port=%d error=%d fd=%d family=%d", ev->ip, ev->port, ev->error, ev->fd, ev->family);
+        }
+    } else if (event_type == AVPROTOCOL_EVENT_START_SEEK) {
+        if (strcmp(protocol_name, "http") == 0) {
+            AVHttpEvent* ev = (AVHttpEvent*)event;
+            av_log(NULL, AV_LOG_INFO, "http start seek url=%s offset=%lld\n",
+                   ev->url, ev->offset);
+        }
+    } else if (event_type == AVPROTOCOL_EVENT_END_SEEK) {
+        if (strcmp(protocol_name, "http") == 0) {
+            AVHttpEvent* ev = (AVHttpEvent*)event;
+            av_log(NULL, AV_LOG_INFO, "http start seek url=%s offset=%lld error_code=%d error=%d\n",
+                   ev->url, ev->offset, ev->http_code, ev->error);
+        }
+    }
+    return 0;
+}
+
 /* Called from the main */
 int main(int argc, char **argv)
 {
     int flags;
     VideoState *is;
+    int ret = av_protocol_event_context_open(&pprotocol_event_dispatcher_context, NULL);
+    if (ret == 0) {
+        pprotocol_event_dispatcher_context->on_protocol_event = on_ffplay_protocol_event;
+    }
 
     init_dynload();
 
@@ -3774,7 +3818,7 @@ int main(int argc, char **argv)
     }
 
     event_loop(is);
-
+    av_protocol_event_context_close(pprotocol_event_dispatcher_context);
     /* never returns */
 
     return 0;
