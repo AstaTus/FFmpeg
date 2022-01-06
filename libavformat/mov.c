@@ -7832,7 +7832,8 @@ static AVIndexEntry *mov_find_next_sample(AVFormatContext *s, AVStream **st)
 }
 
 static int should_retry(AVIOContext *pb, int error_code) {
-    if (error_code == AVERROR_EOF || avio_feof(pb))
+    if ((error_code == AVERROR_EOF || avio_feof(pb)) && (pb != NULL && pb->error == 0))
+//    if (error_code == AVERROR_EOF || avio_feof(pb))
         return 0;
 
     return 1;
@@ -7966,7 +7967,7 @@ static int mov_read_packet(AVFormatContext *s, AVPacket *pkt)
             ret = get_eia608_packet(sc->pb, pkt, sample->size);
         else
             ret = av_get_packet(sc->pb, pkt, sample->size);
-        if (ret < 0) {
+        if (ret != sample->size) {
             if (should_retry(sc->pb, ret)) {
                 mov_current_sample_dec(sc);
             }
