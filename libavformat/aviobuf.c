@@ -61,6 +61,7 @@ static const AVClass *child_class_iterate(void **iter)
 #define D AV_OPT_FLAG_DECODING_PARAM
 static const AVOption ff_avio_options[] = {
     {"protocol_whitelist", "List of protocols that are allowed to be used", OFFSET(protocol_whitelist), AV_OPT_TYPE_STRING, { .str = NULL },  0, 0, D },
+    {"reconnect_by_outer", "When loss connect, break loop and return EIO", OFFSET(reconnect_by_outer), AV_OPT_TYPE_BOOL,   {.i64=0}, 0, 1, D},
     { NULL },
 };
 
@@ -326,10 +327,12 @@ int64_t avio_seek(AVIOContext *s, int64_t offset, int whence)
                !s->write_flag && offset1 >= 0 &&
                (!s->direct || !s->seek) &&
               (whence != SEEK_END || force)) {
-        while(s->pos < offset && !s->eof_reached)
+        while(s->pos < offset && !s->eof_reached && !(s->reconnect_by_outer && s->error == AVERROR(EIO)))
             fill_buffer(s);
         if (s->eof_reached)
             return AVERROR_EOF;
+        if (s->reconnect_by_outer && s->error == AVERROR(EIO))
+            return AVERROR(EIO);
         s->buf_ptr = s->buf_end - (s->pos - offset);
     } else if(!s->write_flag && offset1 < 0 && -offset1 < buffer_size>>1 && s->seek && offset > 0) {
         int64_t res;
@@ -388,6 +391,14 @@ int64_t avio_size(AVIOContext *s)
         s->seek(s->opaque, s->pos, SEEK_SET);
     }
     return size;
+}
+int avio_fioerror(AVIOContext *s)
+{
+    if (!s)
+        return 0;
+    if (s->error == AVERROR(EIO))
+        return AVERROR(EIO);
+    return 0;
 }
 
 int avio_feof(AVIOContext *s)
@@ -973,7 +984,7 @@ uint64_t ffio_read_varlen(AVIOContext *bc){
     return val;
 }
 
-int ffio_fdopen(AVIOContext **s, URLContext *h)
+int ffio_fdopen(AVIOContext **s, URLContext *h, AVDictionary **options)
 {
     uint8_t *buffer = NULL;
     int buffer_size, max_packet_size;
@@ -1024,6 +1035,10 @@ int ffio_fdopen(AVIOContext **s, URLContext *h)
     }
     ((FFIOContext*)(*s))->short_seek_get = ffurl_get_short_seek;
     (*s)->av_class = &ff_avio_class;
+
+    if (av_opt_set_dict(*s, options) < 0)
+        goto fail;
+
     return 0;
 }
 
@@ -1256,7 +1271,7 @@ int ffio_open_whitelist(AVIOContext **s, const char *filename, int flags,
     err = ffurl_open_whitelist(&h, filename, flags, int_cb, options, whitelist, blacklist, NULL);
     if (err < 0)
         return err;
-    err = ffio_fdopen(s, h);
+    err = ffio_fdopen(s, h, options);
     if (err < 0) {
         ffurl_close(h);
         return err;
@@ -1388,7 +1403,7 @@ int avio_read_to_bprint(AVIOContext *h, AVBPrint *pb, size_t max_size)
     return 0;
 }
 
-int avio_accept(AVIOContext *s, AVIOContext **c)
+int avio_accept(AVIOContext *s, AVIOContext **c, AVDictionary **options)
 {
     int ret;
     URLContext *sc = s->opaque;
@@ -1396,7 +1411,7 @@ int avio_accept(AVIOContext *s, AVIOContext **c)
     ret = ffurl_accept(sc, &cc);
     if (ret < 0)
         return ret;
-    return ffio_fdopen(c, cc);
+    return ffio_fdopen(c, cc, options);
 }
 
 int avio_handshake(AVIOContext *c)

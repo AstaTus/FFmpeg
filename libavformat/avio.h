@@ -319,6 +319,9 @@ typedef struct AVIOContext {
      * Read-only statistic of bytes written for this AVIOContext.
      */
     int64_t bytes_written;
+
+
+    int reconnect_by_outer;
 } AVIOContext;
 
 /**
@@ -532,6 +535,12 @@ int avio_feof(AVIOContext *s);
  * @return number of bytes written, < 0 on error.
  */
 int avio_vprintf(AVIOContext *s, const char *fmt, va_list ap);
+
+/**
+ * returns nonzero on read errors.
+ * @return non zero if a read error happened when reading.
+ */
+int avio_fioerror(AVIOContext *s);
 
 /**
  * Writes a formatted string to the context.
@@ -825,7 +834,7 @@ int avio_read_to_bprint(AVIOContext *h, struct AVBPrint *pb, size_t max_size);
  * @return   >= 0 on success or a negative value corresponding
  *           to an AVERROR on failure
  */
-int avio_accept(AVIOContext *s, AVIOContext **c);
+int avio_accept(AVIOContext *s, AVIOContext **c, AVDictionary **options);
 
 /**
  * Perform one step of the protocol handshake to accept a new client.
