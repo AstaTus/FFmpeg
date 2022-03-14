@@ -973,7 +973,7 @@ static int resync(AVFormatContext *s)
     int64_t i;
     int64_t pos = avio_tell(s->pb);
 
-    for (i=0; !avio_feof(s->pb); i++) {
+    for (i=0; !avio_feof(s->pb) && !avio_fioerror(s->pb); i++) {
         int j  = i & (RESYNC_BUFFER_SIZE-1);
         int j1 = j + RESYNC_BUFFER_SIZE;
         flv->resync_buffer[j ] =
@@ -1006,7 +1006,11 @@ static int resync(AVFormatContext *s)
             }
         }
     }
-    return AVERROR_EOF;
+    if (avio_feof(s->pb)) {
+        return AVERROR_EOF;
+    }
+
+    return s->pb->error;
 }
 
 static int flv_read_packet(AVFormatContext *s, AVPacket *pkt)

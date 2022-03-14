@@ -349,6 +349,9 @@ typedef struct AVIOContext {
      * Try to buffer at least this amount of data before flushing it
      */
     int min_packet_size;
+
+
+    int reconnect_by_outer;
 } AVIOContext;
 
 /**
@@ -570,6 +573,12 @@ int64_t avio_size(AVIOContext *s);
  * @return non zero if and only if at end of file or a read error happened when reading.
  */
 int avio_feof(AVIOContext *s);
+
+/**
+ * returns nonzero on read errors.
+ * @return non zero if a read error happened when reading.
+ */
+int avio_fioerror(AVIOContext *s);
 
 /**
  * Writes a formatted string to the context.
@@ -863,7 +872,7 @@ int avio_read_to_bprint(AVIOContext *h, struct AVBPrint *pb, size_t max_size);
  * @return   >= 0 on success or a negative value corresponding
  *           to an AVERROR on failure
  */
-int avio_accept(AVIOContext *s, AVIOContext **c);
+int avio_accept(AVIOContext *s, AVIOContext **c, AVDictionary **options);
 
 /**
  * Perform one step of the protocol handshake to accept a new client.
