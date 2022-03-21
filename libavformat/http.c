@@ -100,6 +100,26 @@ static void on_http_end_seek(AVProtocolEventDispatcherContext * hdispatcher, con
     av_protocol_event_end_seek(hdispatcher, http_protocol_name, &event);
 }
 
+static void on_http_start_reconnect(AVProtocolEventDispatcherContext * hdispatcher, const char *url, int64_t offset)
+{
+    AVHttpEvent event = {0};
+    av_strlcpy(event.url, url, sizeof(event.url));
+    event.offset = offset;
+    av_protocol_event_start_reconnect(hdispatcher, http_protocol_name, &event);
+}
+
+static void on_http_end_reconnect(AVProtocolEventDispatcherContext * hdispatcher, const char *url, int64_t offset, int error, int http_code)
+{
+    AVHttpEvent event = {0};
+    av_strlcpy(event.url, url, sizeof(event.url));
+    event.offset = offset;
+    event.error     = error;
+    event.http_code = http_code;
+
+    av_protocol_event_end_reconnect(hdispatcher, http_protocol_name, &event);
+}
+
+
 static void on_http_read(AVProtocolEventDispatcherContext * hdispatcher, int bytes)
 {
     AVIOTrafficEvent event = {0};
@@ -366,7 +386,9 @@ redo:
     cur_proxy_auth_type = s->auth_state.auth_type;
 
     off = s->off;
+    on_http_start_reconnect(s->protocol_event_dispatcher_context, s->location, off);
     location_changed = http_open_cnx_internal(h, options);
+    on_http_end_reconnect(s->protocol_event_dispatcher_context, s->location, off, location_changed, s->http_code);
     if (location_changed < 0) {
         if (!http_should_reconnect(s, location_changed) ||
             reconnect_delay > s->reconnect_delay_max)
@@ -1868,10 +1890,18 @@ static int64_t http_seek_internal(URLContext *h, int64_t off, int whence, int fo
     memcpy(old_buf, s->buf_ptr, old_buf_size);
     s->hd = NULL;
 
-    on_http_start_seek(s->protocol_event_dispatcher_context, s->location, off);
+    if (force_reconnect) {
+        on_http_start_reconnect(s->protocol_event_dispatcher_context, s->location, off);
+    } else {
+        on_http_start_seek(s->protocol_event_dispatcher_context, s->location, off);
+    }
     /* if it fails, continue on old connection */
     if ((ret = http_open_cnx(h, &options)) < 0) {
-        on_http_end_seek(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
+        if (force_reconnect) {
+            on_http_end_reconnect(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
+        } else {
+            on_http_end_seek(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
+        }
         av_dict_free(&options);
         memcpy(s->buffer, old_buf, old_buf_size);
         s->buf_ptr = s->buffer;
@@ -1880,7 +1910,12 @@ static int64_t http_seek_internal(URLContext *h, int64_t off, int whence, int fo
         s->off     = old_off;
         return ret;
     }
-    on_http_end_seek(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
+    if (force_reconnect) {
+        on_http_end_reconnect(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
+    } else {
+        on_http_end_seek(s->protocol_event_dispatcher_context, s->location, off, ret, s->http_code);
+    }
+
     av_dict_free(&options);
     ffurl_close(old_hd);
     return off;
