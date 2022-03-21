@@ -75,3 +75,14 @@ void av_protocol_io_traffic_event_writing(AVProtocolEventDispatcherContext *h, c
     if (h && h->on_protocol_event)
         h->on_protocol_event(h, AVPROTOCOL_EVENT_WRITING, protocol_name, event);
 }
+
+void av_protocol_event_start_reconnect(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event)
+{
+    if (h && h->on_protocol_event)
+        h->on_protocol_event(h, AVPROTOCOL_EVENT_START_RECONNECT, protocol_name, event);
+}
+void av_protocol_event_end_reconnect(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event)
+{
+    if (h && h->on_protocol_event)
+        h->on_protocol_event(h, AVPROTOCOL_EVENT_END_RECONNECT, protocol_name, event);
+}

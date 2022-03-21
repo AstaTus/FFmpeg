@@ -33,6 +33,9 @@
 #define AVPROTOCOL_EVENT_READING            21
 #define AVPROTOCOL_EVENT_WRITING            22
 
+#define AVPROTOCOL_EVENT_START_RECONNECT    31
+#define AVPROTOCOL_EVENT_END_RECONNECT      32
+
 // list all protocol's event below
 
 typedef struct AVHttpEvent{
@@ -81,6 +84,10 @@ void av_protocol_event_context_closep(AVProtocolEventDispatcherContext **ph);
 
 void av_protocol_event_start_open(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event);
 void av_protocol_event_end_open(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event);
+
+void av_protocol_event_start_reconnect(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event);
+void av_protocol_event_end_reconnect(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event);
+
 
 void av_protocol_event_start_seek(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event);
 void av_protocol_event_end_seek(AVProtocolEventDispatcherContext *h, const char * protocol_name, void * event);
