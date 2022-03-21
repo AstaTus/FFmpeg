@@ -578,7 +578,7 @@ int avio_feof(AVIOContext *s);
  * returns nonzero on read errors.
  * @return non zero if a read error happened when reading.
  */
-int avio_fioerror(AVIOContext *s);
+int avio_ferror(AVIOContext *s);
 
 /**
  * Writes a formatted string to the context.

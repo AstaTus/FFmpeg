@@ -299,12 +299,15 @@ int64_t avio_seek(AVIOContext *s, int64_t offset, int whence)
                !s->write_flag && offset1 >= 0 &&
                (!s->direct || !s->seek) &&
               (whence != SEEK_END || force)) {
-        while(s->pos < offset && !s->eof_reached && !(s->reconnect_by_outer && s->error == AVERROR(EIO)))
+        while(s->pos < offset && !s->eof_reached && !(s->reconnect_by_outer && s->error == AVERROR(EIO)) &&
+        s->error != AVERROR_EXIT)
             fill_buffer(s);
         if (s->eof_reached)
             return AVERROR_EOF;
         if (s->reconnect_by_outer && s->error == AVERROR(EIO))
             return AVERROR(EIO);
+        if (s->error == AVERROR_EXIT)
+            return AVERROR_EXIT;
         s->buf_ptr = s->buf_end - (s->pos - offset);
     } else if(!s->write_flag && offset1 < 0 && -offset1 < buffer_size>>1 && s->seek && offset > 0) {
         int64_t res;
@@ -363,12 +366,14 @@ int64_t avio_size(AVIOContext *s)
     }
     return size;
 }
-int avio_fioerror(AVIOContext *s)
+int avio_ferror(AVIOContext *s)
 {
     if (!s)
         return 0;
     if (s->error == AVERROR(EIO))
         return AVERROR(EIO);
+    else if (s->error == AVERROR_EXIT)
+        return AVERROR_EXIT;
     return 0;
 }
 
