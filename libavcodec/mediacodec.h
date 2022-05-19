@@ -24,6 +24,7 @@
 #define AVCODEC_MEDIACODEC_H
 
 #include "libavcodec/avcodec.h"
+#include "mediacodecdec_common.h"
 
 /**
  * This structure holds a reference to a android/view/Surface object that will
@@ -38,6 +39,7 @@ typedef struct AVMediaCodecContext {
     void *surface;
 
 } AVMediaCodecContext;
+
 
 /**
  * Allocate and initialize a MediaCodec context.

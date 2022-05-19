@@ -34,6 +34,7 @@
 #include "avcodec.h"
 #include "mediacodec_wrapper.h"
 
+
 typedef struct MediaCodecDecContext {
 
     AVCodecContext *avctx;

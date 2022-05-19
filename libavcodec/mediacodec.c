@@ -37,6 +37,7 @@
 #include "ffjni.h"
 #include "mediacodecdec_common.h"
 #include "version.h"
+#include "mediacodecdec_internal.h"
 
 AVMediaCodecContext *av_mediacodec_alloc_context(void)
 {

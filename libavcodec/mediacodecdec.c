@@ -32,26 +32,14 @@
 
 #include "avcodec.h"
 #include "decode.h"
-#include "h264_parse.h"
+
 #include "hevc_parse.h"
+#include "h264_parse.h"
 #include "hwconfig.h"
 #include "internal.h"
 #include "mediacodec_wrapper.h"
-#include "mediacodecdec_common.h"
 
-typedef struct MediaCodecH264DecContext {
-
-    AVClass *avclass;
-
-    MediaCodecDecContext *ctx;
-
-    AVPacket buffered_pkt;
-
-    int delay_flush;
-    int amlogic_mpeg2_api23_workaround;
-
-} MediaCodecH264DecContext;
-
+#include "mediacodecdec_internal.h"
 static av_cold int mediacodec_decode_close(AVCodecContext *avctx)
 {
     MediaCodecH264DecContext *s = avctx->priv_data;
