@@ -207,6 +207,7 @@ typedef struct HTTPContext {
     AVDictionary *redirect_cache;
     uint64_t filesize_from_content_range;
     uint64_t protocol_event_context_ptr;
+    int64_t protocol_event_context_ptr;
     AVProtocolEventDispatcherContext * protocol_event_dispatcher_context;
 } HTTPContext;
 
@@ -250,7 +251,7 @@ static const AVOption options[] = {
     { "resource", "The resource requested by a client", OFFSET(resource), AV_OPT_TYPE_STRING, { .str = NULL }, 0, 0, E },
     { "reply_code", "The http status code to return to a client", OFFSET(reply_code), AV_OPT_TYPE_INT, { .i64 = 200}, INT_MIN, 599, E},
     { "short_seek_size", "Threshold to favor readahead over seek.", OFFSET(short_seek_size), AV_OPT_TYPE_INT, { .i64 = 0 }, 0, INT_MAX, D },
-    { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr), AV_OPT_TYPE_UINT64, { .i64 = 0 }, 0, UINT64_MAX, .flags = D|E },
+    { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr), AV_OPT_TYPE_PTR, { .i64 = 0 }, INT64_MIN, INT64_MAX, .flags = D|E },
     { NULL }
 };
 
@@ -758,7 +759,7 @@ static int http_open(URLContext *h, const char *uri, int flags,
 {
     HTTPContext *s = h->priv_data;
     int ret;
-    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *) s->protocol_event_context_ptr;
+    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *) (intptr_t)s->protocol_event_context_ptr;
 
     if( s->seekable == 1 )
         h->is_streamed = 0;
@@ -2146,7 +2147,7 @@ static int http_proxy_open(URLContext *h, const char *uri, int flags)
     HTTPAuthType cur_auth_type;
     char *authstr;
 
-    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *)(s->protocol_event_context_ptr);
+    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *)(intptr_t)(s->protocol_event_context_ptr);
 
     if( s->seekable == 1 )
         h->is_streamed = 0;

@@ -243,6 +243,7 @@ enum AVOptionType{
 #endif
     AV_OPT_TYPE_BOOL,
     AV_OPT_TYPE_CHLAYOUT,
+    AV_OPT_TYPE_PTR,
 };
 
 /**

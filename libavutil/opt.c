@@ -80,6 +80,7 @@ FF_ENABLE_DEPRECATION_WARNINGS
     case AV_OPT_TYPE_DURATION:
     case AV_OPT_TYPE_INT64:
     case AV_OPT_TYPE_UINT64:
+    case AV_OPT_TYPE_PTR:
         *intnum = *(int64_t *)dst;
         return 0;
     case AV_OPT_TYPE_FLOAT:
@@ -136,6 +137,7 @@ FF_DISABLE_DEPRECATION_WARNINGS
     case AV_OPT_TYPE_CHANNEL_LAYOUT:
 FF_ENABLE_DEPRECATION_WARNINGS
 #endif
+    case AV_OPT_TYPE_PTR:
     case AV_OPT_TYPE_INT64:{
         double d = num / den;
         if (intnum == 1 && d == (double)INT64_MAX) {
@@ -234,6 +236,31 @@ static int set_string(void *obj, const AVOption *o, const char *val, uint8_t **d
                               opt->type == AV_OPT_TYPE_INT)     \
                              ? opt->default_val.i64             \
                              : opt->default_val.dbl)
+
+
+
+static int write_ptr(void *obj, const AVOption *o, void *dst, int64_t ptr)
+{
+    *(int64_t *)dst = ptr;
+    return 0;
+}
+
+static int set_string_ptr(void *obj, void *target_obj, const AVOption *o, const char *val, void *dst)
+{
+    int ret = 0;
+
+    int64_t ptr = atol(val);
+
+    if (ptr == 0) {
+        return AVERROR(EINVAL);
+    }
+    if ((ret = write_ptr(obj, o, dst, ptr)) < 0) {
+        av_log(obj, AV_LOG_ERROR, "set_string_ptr write ptr error %d\n", ret);
+        return ret;
+    }
+    return 0;
+}
+
 
 static int set_string_number(void *obj, void *target_obj, const AVOption *o, const char *val, void *dst)
 {
@@ -525,6 +552,8 @@ FF_ENABLE_DEPRECATION_WARNINGS
     case AV_OPT_TYPE_DOUBLE:
     case AV_OPT_TYPE_RATIONAL:
         return set_string_number(obj, target_obj, o, val, dst);
+     case AV_OPT_TYPE_PTR:
+        return set_string_ptr(obj, target_obj, o, val, dst);
     case AV_OPT_TYPE_IMAGE_SIZE:
         return set_string_image_size(obj, o, val, dst);
     case AV_OPT_TYPE_VIDEO_RATE: {
