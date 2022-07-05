@@ -415,6 +415,9 @@ static int wav_read_header(AVFormatContext *s)
         if (avio_feof(pb))
             break;
 
+        if(avio_ferror(pb))
+            break;
+
         switch (tag) {
         case MKTAG('f', 'm', 't', ' '):
             /* only parse the first 'fmt ' tag found */
