@@ -1447,6 +1447,9 @@ void av_opt_set_defaults2(void *s, int mask, int flags)
             case AV_OPT_TYPE_DICT:
                 set_string_dict(s, opt, opt->default_val.str, dst);
                 break;
+            case AV_OPT_TYPE_PTR:
+                write_ptr(s, opt, dst, opt->default_val.i64);
+                break;
         default:
             av_log(s, AV_LOG_DEBUG, "AVOption type %d of option %s not implemented yet\n",
                    opt->type, opt->name);
