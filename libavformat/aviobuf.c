@@ -622,6 +622,10 @@ static void fill_buffer(AVIOContext *s)
         s->buf_end = dst + len;
         ffiocontext(s)->bytes_read += len;
         s->bytes_read = ffiocontext(s)->bytes_read;
+
+        if (s->error == AVERROR(EIO) || s->error == AVERROR(ECONNABORTED)) {
+            s->error = 0;
+        }
     }
 }
 
