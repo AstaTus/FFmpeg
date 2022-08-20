@@ -924,8 +924,8 @@ static int videotoolbox_common_end_frame(AVCodecContext *avctx, AVFrame *frame)
     }
 
     if (!vtctx->frame) {
-        vtctx->reconfig_needed = true;
-        return AVERROR_UNKNOWN;
+//        vtctx->reconfig_needed = true;
+        return AVERROR_INVALIDDATA;
     }
 
     return videotoolbox_buffer_create(avctx, frame);
