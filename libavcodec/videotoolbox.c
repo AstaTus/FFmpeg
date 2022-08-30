@@ -188,43 +188,50 @@ CFDataRef ff_videotoolbox_avcc_extradata_create(AVCodecContext *avctx)
     VTContext *vtctx = avctx->internal->hwaccel_priv_data;
     H264Context *h = avctx->priv_data;
     CFDataRef data = NULL;
-    uint8_t *p;
-    int sps_size = escape_ps(NULL, h->ps.sps->data, h->ps.sps->data_size);
-    int pps_size = escape_ps(NULL, h->ps.pps->data, h->ps.pps->data_size);
-    int vt_extradata_size;
-    uint8_t *vt_extradata;
 
-    vt_extradata_size = 6 + 2 + sps_size + 3 + pps_size;
-    vt_extradata = av_malloc(vt_extradata_size);
+    if (h->is_avc == 0) {
 
-    if (!vt_extradata)
-        return NULL;
+        uint8_t *p;
+        int sps_size = escape_ps(NULL, h->ps.sps->data, h->ps.sps->data_size);
+        int pps_size = escape_ps(NULL, h->ps.pps->data, h->ps.pps->data_size);
+        int vt_extradata_size;
+        uint8_t *vt_extradata;
 
-    p = vt_extradata;
+        vt_extradata_size = 6 + 2 + sps_size + 3 + pps_size;
+        vt_extradata = av_malloc(vt_extradata_size);
 
-    AV_W8(p + 0, 1); /* version */
-    AV_W8(p + 1, h->ps.sps->data[1]); /* profile */
-    AV_W8(p + 2, h->ps.sps->data[2]); /* profile compat */
-    AV_W8(p + 3, h->ps.sps->data[3]); /* level */
-    AV_W8(p + 4, 0xff); /* 6 bits reserved (111111) + 2 bits nal size length - 3 (11) */
-    AV_W8(p + 5, 0xe1); /* 3 bits reserved (111) + 5 bits number of sps (00001) */
-    AV_WB16(p + 6, sps_size);
-    p += 8;
-    p += escape_ps(p, h->ps.sps->data, h->ps.sps->data_size);
-    AV_W8(p + 0, 1); /* number of pps */
-    AV_WB16(p + 1, pps_size);
-    p += 3;
-    p += escape_ps(p, h->ps.pps->data, h->ps.pps->data_size);
+        if (!vt_extradata)
+            return NULL;
 
-    av_assert0(p - vt_extradata == vt_extradata_size);
+        p = vt_extradata;
 
-    // save sps header (profile/level) used to create decoder session,
-    // so we can detect changes and recreate it.
-    if (vtctx)
-        memcpy(vtctx->sps, h->ps.sps->data + 1, 3);
+        AV_W8(p + 0, 1); /* version */
+        AV_W8(p + 1, h->ps.sps->data[1]); /* profile */
+        AV_W8(p + 2, h->ps.sps->data[2]); /* profile compat */
+        AV_W8(p + 3, h->ps.sps->data[3]); /* level */
+        AV_W8(p + 4, 0xff); /* 6 bits reserved (111111) + 2 bits nal size length - 3 (11) */
+        AV_W8(p + 5, 0xe1); /* 3 bits reserved (111) + 5 bits number of sps (00001) */
+        AV_WB16(p + 6, sps_size);
+        p += 8;
+        p += escape_ps(p, h->ps.sps->data, h->ps.sps->data_size);
+        AV_W8(p + 0, 1); /* number of pps */
+        AV_WB16(p + 1, pps_size);
+        p += 3;
+        p += escape_ps(p, h->ps.pps->data, h->ps.pps->data_size);
 
-    data = CFDataCreate(kCFAllocatorDefault, vt_extradata, vt_extradata_size);
-    av_free(vt_extradata);
+        av_assert0(p - vt_extradata == vt_extradata_size);
+
+        // save sps header (profile/level) used to create decoder session,
+        // so we can detect changes and recreate it.
+        if (vtctx)
+            memcpy(vtctx->sps, h->ps.sps->data + 1, 3);
+
+        data = CFDataCreate(kCFAllocatorDefault, vt_extradata, vt_extradata_size);
+        av_free(vt_extradata);
+    }//avcc
+    else {
+        data = CFDataCreate(kCFAllocatorDefault, avctx->extradata, avctx->extradata_size);
+    }
     return data;
 }
 
@@ -396,6 +403,9 @@ int ff_videotoolbox_h264_start_frame(AVCodecContext *avctx,
     VTContext *vtctx = avctx->internal->hwaccel_priv_data;
     H264Context *h = avctx->priv_data;
 
+    //avc == 1 不带 startcode
+    //avc == 0 带startcode
+    av_log(avctx, AV_LOG_DEBUG, "videotoolbox: ff_videotoolbox_h264_start_frame is_avc=%d buffer-size=%d\n", h->is_avc, size);
     if (h->is_avc == 1) {
         return ff_videotoolbox_buffer_copy(vtctx, buffer, size);
     }
@@ -723,7 +733,7 @@ static OSStatus videotoolbox_session_decode_frame(AVCodecContext *avctx)
 
     status = VTDecompressionSessionDecodeFrame(videotoolbox->session,
                                                sample_buf,
-                                               0,       // decodeFlags
+                                               videotoolbox->decode_flag,       // decodeFlags
                                                NULL,    // sourceFrameRefCon
                                                0);      // infoFlagsOut
     if (status == noErr)
@@ -777,6 +787,7 @@ static CFDictionaryRef videotoolbox_buffer_attributes_create(int width,
                                                       0,
                                                       &kCFTypeDictionaryKeyCallBacks,
                                                       &kCFTypeDictionaryValueCallBacks);
+    av_log(NULL, AV_LOG_DEBUG, "videotoolbox pix_fmt=%d\n", cv_pix_fmt);
 
     if (pix_fmt)
         CFDictionarySetValue(buffer_attributes, kCVPixelBufferPixelFormatTypeKey, cv_pix_fmt);
@@ -1183,11 +1194,13 @@ static AVVideotoolboxContext *videotoolbox_alloc_context_with_pix_fmt(enum AVPix
     AVVideotoolboxContext *ret = av_mallocz(sizeof(*ret));
 
     if (ret) {
+
         OSType cv_pix_fmt_type = av_map_videotoolbox_format_from_pixfmt2(pix_fmt, full_range);
         if (cv_pix_fmt_type == 0) {
             cv_pix_fmt_type = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
         }
         ret->cv_pix_fmt_type = cv_pix_fmt_type;
+        ret->decode_flag = 0;
     }
 
     return ret;
@@ -1424,3 +1437,7 @@ void av_videotoolbox_default_free(AVCodecContext *avctx)
 #endif /* FF_API_VT_HWACCEL_CONTEXT */
 
 #endif /* CONFIG_VIDEOTOOLBOX */
+
+AVVideotoolboxContext *av_videotoolbox_get_context(AVCodecContext *avctx) {
+    return videotoolbox_get_context(avctx);
+}

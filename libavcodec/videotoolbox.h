@@ -85,6 +85,11 @@ typedef struct AVVideotoolboxContext {
      * CoreMedia codec type that Videotoolbox will use to create the decompression session.
      */
     int cm_codec_type;
+    /**
+     * VTDecompressionSessionDecodeFrame decoder flag
+     * Set by the user.
+     */
+    int decode_flag;
 } AVVideotoolboxContext;
 
 #if FF_API_VT_HWACCEL_CONTEXT
@@ -143,6 +148,12 @@ void av_videotoolbox_default_free(AVCodecContext *avctx);
 
 #endif /* FF_API_VT_HWACCEL_CONTEXT */
 
+/**
+ * get AVVideotoolboxContext from AVCodecContext
+ *
+ * @param avctx the corresponding codec context
+ */
+AVVideotoolboxContext *av_videotoolbox_get_context(AVCodecContext *avctx);
 /**
  * @}
  */
