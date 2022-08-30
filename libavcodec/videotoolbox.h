@@ -74,6 +74,11 @@ typedef struct AVVideotoolboxContext {
      * Set by the caller.
      */
     int cm_codec_type;
+    /**
+     * VTDecompressionSessionDecodeFrame decoder flag
+     * Set by the user.
+     */
+    int decode_flag;
 } AVVideotoolboxContext;
 
 /**
@@ -120,6 +125,12 @@ int av_videotoolbox_default_init2(AVCodecContext *avctx, AVVideotoolboxContext *
  */
 void av_videotoolbox_default_free(AVCodecContext *avctx);
 
+/**
+ * get AVVideotoolboxContext from AVCodecContext
+ *
+ * @param avctx the corresponding codec context
+ */
+AVVideotoolboxContext *av_videotoolbox_get_context(AVCodecContext *avctx);
 /**
  * @}
  */
