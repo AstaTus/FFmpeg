@@ -268,7 +268,7 @@ static void mediacodec_buffer_release(void *opaque, uint8_t *data)
 
     if (!released && (ctx->delay_flush || buffer->serial == atomic_load(&ctx->serial))) {
         atomic_fetch_sub(&ctx->hw_buffer_count, 1);
-        av_log(ctx->avctx, AV_LOG_DEBUG,
+        av_log(NULL, AV_LOG_DEBUG,
                "Releasing output buffer %zd (%p) ts=%"PRId64" on free() [%d pending]\n",
                buffer->index, buffer, buffer->pts, atomic_load(&ctx->hw_buffer_count));
         ff_AMediaCodec_releaseOutputBuffer(ctx->codec, buffer->index, 0);
