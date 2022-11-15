@@ -938,6 +938,7 @@ int ff_mediacodec_dec_send(AVCodecContext *avctx, MediaCodecDecContext *s,
             if (ff_AMediaCodec_infoTryAgainLater(codec, index)) {
                 av_log(avctx, AV_LOG_TRACE, "No input buffer available, try again later\n");
                 break;
+//                return AVERROR(EAGAIN);
             }
 
             if (index < 0) {

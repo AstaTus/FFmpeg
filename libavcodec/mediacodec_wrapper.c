@@ -312,7 +312,13 @@ struct FFAMediaCodec {
     }                                                              \
 } while (0)
 
+
 int ff_AMediaCodecProfile_getProfileFromAVCodecContext(AVCodecContext *avctx)
+{
+    return ff_AMediaCodecProfile_getProfile(avctx, avctx->codec_id, avctx->profile);
+}
+
+int ff_AMediaCodecProfile_getProfile(void *avctx, enum AVCodecID codec_id, int profile)
 {
     int ret = -1;
 
@@ -326,8 +332,8 @@ int ff_AMediaCodecProfile_getProfileFromAVCodecContext(AVCodecContext *avctx)
         goto done;
     }
 
-    if (avctx->codec_id == AV_CODEC_ID_H264) {
-        switch(avctx->profile) {
+    if (codec_id == AV_CODEC_ID_H264) {
+        switch(profile) {
         case FF_PROFILE_H264_BASELINE:
         case FF_PROFILE_H264_CONSTRAINED_BASELINE:
             field_id = jfields.avc_profile_baseline_id;
@@ -355,8 +361,8 @@ int ff_AMediaCodecProfile_getProfileFromAVCodecContext(AVCodecContext *avctx)
             field_id = jfields.avc_profile_high444_id;
             break;
         }
-    } else if (avctx->codec_id == AV_CODEC_ID_HEVC) {
-        switch (avctx->profile) {
+    } else if (codec_id == AV_CODEC_ID_HEVC) {
+        switch (profile) {
         case FF_PROFILE_HEVC_MAIN:
         case FF_PROFILE_HEVC_MAIN_STILL_PICTURE:
             field_id = jfields.hevc_profile_main_id;

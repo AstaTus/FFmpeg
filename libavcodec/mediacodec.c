@@ -32,7 +32,11 @@
 #include <libavutil/avassert.h>
 
 #include "libavcodec/avcodec.h"
+#include "internal.h"
+
 #include "libavutil/mem.h"
+#include "bsf.h"
+#include "decode.h"
 
 #include "ffjni.h"
 #include "mediacodecdec_common.h"
@@ -174,6 +178,86 @@ int av_mediacodec_support_codec(enum AVCodecID codec_id, enum AVPixelFormat pix_
     return 0;
 }
 
+
+
+int av_mediacodec_send_packet(AVCodecContext *avctx, AVPacket *pkt, bool wait)
+{
+    AVCodecInternal *avci = avctx->internal;
+    MediaCodecH264DecContext *s = avctx->priv_data;
+
+    int ret;
+
+    if (!avcodec_is_open(avctx) || !av_codec_is_decoder(avctx->codec))
+        return AVERROR(EINVAL);
+
+    if (avctx->internal->draining)
+        return AVERROR_EOF;
+
+    if (pkt && !pkt->size && pkt->data)
+        return AVERROR(EINVAL);
+
+    av_packet_unref(avci->buffer_pkt);
+    if (pkt && (pkt->data || pkt->side_data_elems)) {
+        ret = av_packet_ref(avci->buffer_pkt, pkt);
+        if (ret < 0)
+            return ret;
+    }
+
+    ret = av_bsf_send_packet(avci->bsf, avci->buffer_pkt);
+    if (ret < 0) {
+        av_packet_unref(avci->buffer_pkt);
+        return ret;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    /* fetch new packet or eof */
+    ret = ff_decode_get_packet(avctx, &s->buffered_pkt);
+    if (ret == AVERROR_EOF) {
+        AVPacket null_pkt = { 0 };
+        ret = ff_mediacodec_dec_send(avctx, s->ctx, &null_pkt, true);
+        if (ret < 0)
+            return ret;
+        return 0;
+    } else if (ret < 0) {
+        return ret;
+    }
+
+    /* try to flush any buffered packet data */
+    if (s->buffered_pkt.size > 0) {
+        ret = ff_mediacodec_dec_send(avctx, s->ctx, &s->buffered_pkt, false);
+        if (ret >= 0) {
+            s->buffered_pkt.size -= ret;
+            s->buffered_pkt.data += ret;
+            if (s->buffered_pkt.size <= 0) {
+                av_packet_unref(&s->buffered_pkt);
+            } else {
+                av_log(avctx, AV_LOG_WARNING,
+                       "could not send entire packet in single input buffer (%d < %d)\n",
+                       ret, s->buffered_pkt.size+ret);
+            }
+            return 0;
+        } else {
+            return ret;
+        }
+
+//        if (s->amlogic_mpeg2_api23_workaround && s->buffered_pkt.size <= 0) {
+//            /* fallthrough to fetch next packet regardless of input buffer space */
+//        } else {
+//            /* poll for space again */
+//            continue;
+//        }
+    }
+
+    return AVERROR(EAGAIN);
+}
+
+int av_mediacodec_receive_frame(AVCodecContext * avctx, AVFrame * pframe, bool wait)
+{
+    MediaCodecH264DecContext *s = avctx->priv_data;
+
+    return ff_mediacodec_dec_receive(avctx, s->ctx, pframe, wait);
+}
+
 #else
 
 #include <stdlib.h>
@@ -201,4 +285,16 @@ int av_mediacodec_render_buffer_at_time(AVMediaCodecBuffer *buffer, int64_t time
 {
     return AVERROR(ENOSYS);
 }
+
+int av_mediacodec_send_packet(AVCodecContext *avctx, AVPacket *pkt, bool wait)
+{
+    return AVERROR(ENOSYS);
+}
+
+int av_mediacodec_receive_frame(AVCodecContext * avctx, AVFrame * pframe, bool wait)
+{
+    return AVERROR(ENOSYS);
+}
+
+
 #endif

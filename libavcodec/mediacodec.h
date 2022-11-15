@@ -69,6 +69,11 @@ int av_mediacodec_default_init(AVCodecContext *avctx, AVMediaCodecContext *ctx, 
  */
 void av_mediacodec_default_free(AVCodecContext *avctx);
 
+int av_mediacodec_send_packet(AVCodecContext *avctx, AVPacket *pkt, bool wait);
+
+int av_mediacodec_receive_frame(AVCodecContext * avctx, AVFrame * pframe, bool wait);
+
+
 /**
  * Opaque structure representing a MediaCodec buffer to render.
  */

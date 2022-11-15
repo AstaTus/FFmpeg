@@ -53,8 +53,9 @@
  * http://developer.android.com/reference/android/media/MediaCodec.html.
  *
  */
-
 int ff_AMediaCodecProfile_getProfileFromAVCodecContext(AVCodecContext *avctx);
+
+int ff_AMediaCodecProfile_getProfile(void *avctx, enum AVCodecID codec_id, int profile);
 
 char *ff_AMediaCodecList_getCodecNameByType(const char *mime, int profile, int encoder, void *log_ctx);
 
