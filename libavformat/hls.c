@@ -2162,9 +2162,9 @@ static int compare_ts_with_wrapdetect(int64_t ts_a, struct playlist *pls_a,
 static int find_timestamp_in_seq_no( struct playlist *pls,int64_t *timestamp, int seq_no)
 {
     int i;
-    *timestamp=0;
+    (*timestamp)=0;
     for (i = 0; i < seq_no; i++) {
-        *timestamp += pls->segments[i]->duration ;
+        (*timestamp) += pls->segments[i]->duration ;
     }
     return 0;
 }
@@ -2219,9 +2219,11 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
                     ts_diff = timestamp + av_rescale_rnd(pls->pkt->dts, AV_TIME_BASE,
                                             tb.den, AV_ROUND_DOWN) -
                             pls->seek_timestamp;
-                    if (ts_diff >= 0 && (pls->seek_flags  & AVSEEK_FLAG_ANY ||
-                                        pls->pkt->flags & AV_PKT_FLAG_KEY)) {
+//                    if (ts_diff >= 0 && (pls->seek_flags  & AVSEEK_FLAG_ANY ||
+//                                        pls->pkt->flags & AV_PKT_FLAG_KEY)) {
+                    if (ts_diff >= 0) {
                         pls->seek_timestamp = AV_NOPTS_VALUE;
+//                        av_log(c->ctx, AV_LOG_DEBUG, "hls:ts_diff>0\n");
                         break;
                     }
                 }
