@@ -66,7 +66,9 @@ enum KeyType {
 };
 
 struct segment {
+    int64_t previous_duration;
     int64_t duration;
+    int64_t start_time;
     int64_t url_offset;
     int64_t size;
     char *url;
@@ -712,7 +714,8 @@ static int parse_playlist(HLSContext *c, const char *url,
                           struct playlist *pls, AVIOContext *in)
 {
     int ret = 0, is_segment = 0, is_variant = 0;
-    int64_t duration = 0;
+//    int64_t duration = 0;
+    int64_t duration = 0, previous_duration1 = 0, previous_duration = 0, total_duration = 0;
     enum KeyType key_type = KEY_NONE;
     uint8_t iv[16] = "";
     int has_iv = 0;
@@ -871,7 +874,10 @@ static int parse_playlist(HLSContext *c, const char *url,
         } else if (av_strstart(line, "#EXT-X-ENDLIST", &ptr)) {
             if (pls)
                 pls->finished = 1;
-        } else if (av_strstart(line, "#EXTINF:", &ptr)) {
+        } else if (av_strstart(line, "#EXT-X-DISCONTINUITY", &ptr)) {
+                previous_duration = previous_duration1;
+        }
+        else if (av_strstart(line, "#EXTINF:", &ptr)) {
             is_segment = 1;
             duration   = atof(ptr) * AV_TIME_BASE;
         } else if (av_strstart(line, "#EXT-X-BYTERANGE:", &ptr)) {
@@ -946,6 +952,11 @@ static int parse_playlist(HLSContext *c, const char *url,
                                     " set to default value to 1ms.\n", seg->url);
                     duration = 0.001 * AV_TIME_BASE;
                 }
+
+                previous_duration1 += duration;
+                seg->previous_duration = previous_duration;
+                seg->start_time = total_duration;
+                total_duration += duration;
                 seg->duration = duration;
                 seg->key_type = key_type;
                 dynarray_add(&pls->segments, &pls->n_segments, seg);
@@ -2148,16 +2159,27 @@ static int compare_ts_with_wrapdetect(int64_t ts_a, struct playlist *pls_a,
     return av_compare_mod(scaled_ts_a, scaled_ts_b, 1LL << 33);
 }
 
+static int find_timestamp_in_seq_no( struct playlist *pls,int64_t *timestamp, int seq_no)
+{
+    int i;
+    *timestamp=0;
+    for (i = 0; i < seq_no; i++) {
+        *timestamp += pls->segments[i]->duration ;
+    }
+    return 0;
+}
+
 static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
 {
     HLSContext *c = s->priv_data;
     int ret, i, minplaylist = -1;
-
+    int64_t timestamp = AV_NOPTS_VALUE;//add
     recheck_discard_flags(s, c->first_packet);
     c->first_packet = 0;
 
     for (i = 0; i < c->n_playlists; i++) {
         struct playlist *pls = c->playlists[i];
+        find_timestamp_in_seq_no(pls,&timestamp,pls->cur_seq_no);//add
         /* Make sure we've got one buffered packet from each open playlist
          * stream */
         if (pls->needed && !pls->pkt->data) {
@@ -2194,7 +2216,7 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
                     }
 
                     tb = get_timebase(pls);
-                    ts_diff = av_rescale_rnd(pls->pkt->dts, AV_TIME_BASE,
+                    ts_diff = timestamp + av_rescale_rnd(pls->pkt->dts, AV_TIME_BASE,
                                             tb.den, AV_ROUND_DOWN) -
                             pls->seek_timestamp;
                     if (ts_diff >= 0 && (pls->seek_flags  & AVSEEK_FLAG_ANY ||
@@ -2276,6 +2298,29 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
             ret = set_stream_info_from_input_stream(st, pls, ist);
             if (ret < 0) {
                 return ret;
+            }
+        }
+
+        if (c->playlists[minplaylist]->finished) {
+            struct playlist *pls = c->playlists[minplaylist];
+            int seq_no = pls->cur_seq_no - pls->start_seq_no;
+            if (seq_no < pls->n_segments && s->streams[pkt->stream_index]) {
+                struct segment *seg = pls->segments[seq_no];
+                int64_t pred = av_rescale_q(seg->previous_duration,
+                                            AV_TIME_BASE_Q,
+                                            s->streams[pkt->stream_index]->time_base);
+                int64_t max_ts = av_rescale_q(seg->start_time + seg->duration,
+                                              AV_TIME_BASE_Q,
+                                              s->streams[pkt->stream_index]->time_base);
+                /* EXTINF duration is not precise enough */
+                max_ts += 2 * AV_TIME_BASE;
+                if (s->start_time > 0) {
+                    max_ts += av_rescale_q(s->start_time,
+                                           AV_TIME_BASE_Q,
+                                           s->streams[pkt->stream_index]->time_base);
+                }
+                if (pkt->dts != AV_NOPTS_VALUE && pkt->dts + pred < max_ts) pkt->dts += pred;
+                if (pkt->pts != AV_NOPTS_VALUE && pkt->pts + pred < max_ts) pkt->pts += pred;
             }
         }
 
