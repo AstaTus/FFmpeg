@@ -2179,7 +2179,6 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
 
     for (i = 0; i < c->n_playlists; i++) {
         struct playlist *pls = c->playlists[i];
-        find_timestamp_in_seq_no(pls,&timestamp,pls->cur_seq_no);//add
         /* Make sure we've got one buffered packet from each open playlist
          * stream */
         if (pls->needed && !pls->pkt->data) {
@@ -2215,6 +2214,9 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
                         break;
                     }
 
+                    if (timestamp == AV_NOPTS_VALUE) {
+                        find_timestamp_in_seq_no(pls,&timestamp,pls->cur_seq_no);//add
+                    }
                     tb = get_timebase(pls);
                     ts_diff = timestamp + av_rescale_rnd(pls->pkt->dts, AV_TIME_BASE,
                                             tb.den, AV_ROUND_DOWN) -
