@@ -879,7 +879,7 @@ static int ff_mediacodec_parse_h264_sei_data(AVCodecContext *avctx, AVPacket *pk
             case H264_NAL_SEI:
                 ff_h264_sei_uninit(&h->h264_sei);
 //                ret =
-                ff_h264_sei_decode(&h->h264_sei, &nal->gb, NULL, avctx);
+                ff_h264_sei_user_data_unregistered_decode(&h->h264_sei, &nal->gb, NULL, avctx);
 //                h->has_recovery_point = h->has_recovery_point || h->sei.recovery_point.recovery_frame_cnt != -1;
 //                if (avctx->debug & FF_DEBUG_GREEN_MD)
 //                    debug_green_metadata(&h->sei.green_metadata, h->avctx);

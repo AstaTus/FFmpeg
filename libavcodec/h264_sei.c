@@ -410,6 +410,63 @@ static int decode_alternative_transfer(H264SEIAlternativeTransfer *h,
     return 0;
 }
 
+int ff_h264_sei_user_data_unregistered_decode(H264SEIContext *h, GetBitContext *gb,
+                                              const struct H264ParamSets *ps, void *logctx)
+{
+    int master_ret = 0;
+
+    while (get_bits_left(gb) > 16 && show_bits(gb, 16)) {
+        GetBitContext gb_payload;
+        int type = 0;
+        unsigned size = 0;
+        int ret  = 0;
+
+        do {
+            if (get_bits_left(gb) < 8)
+                return AVERROR_INVALIDDATA;
+            type += show_bits(gb, 8);
+        } while (get_bits(gb, 8) == 255);
+
+        if (type != SEI_TYPE_USER_DATA_UNREGISTERED) {
+            av_log(logctx, AV_LOG_DEBUG, "SEI type is not TYPE_USER_DATA_UNREGISTERED\n");
+            return AVERROR_INVALIDDATA;
+        }
+
+        do {
+            if (get_bits_left(gb) < 8)
+                return AVERROR_INVALIDDATA;
+            size += show_bits(gb, 8);
+        } while (get_bits(gb, 8) == 255);
+
+        if (size > get_bits_left(gb) / 8) {
+            av_log(logctx, AV_LOG_ERROR, "SEI type %d size %d truncated at %d\n",
+                   type, 8*size, get_bits_left(gb));
+            return AVERROR_INVALIDDATA;
+        }
+
+        ret = init_get_bits8(&gb_payload, gb->buffer + get_bits_count(gb) / 8, size);
+        if (ret < 0)
+            return ret;
+
+
+        ret = decode_unregistered_user_data(&h->unregistered, &gb_payload, logctx, size);
+
+        if (ret < 0 && ret != AVERROR_PS_NOT_FOUND)
+            return ret;
+        if (ret < 0)
+            master_ret = ret;
+
+        if (get_bits_left(&gb_payload) < 0) {
+            av_log(logctx, AV_LOG_WARNING, "SEI type %d overread by %d bits\n",
+                   type, -get_bits_left(&gb_payload));
+        }
+
+        skip_bits_long(gb, 8 * size);
+    }
+
+    return master_ret;
+}
+
 int ff_h264_sei_decode(H264SEIContext *h, GetBitContext *gb,
                        const H264ParamSets *ps, void *logctx)
 {

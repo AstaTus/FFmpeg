@@ -180,6 +180,9 @@ typedef struct H264SEIContext {
 
 struct H264ParamSets;
 
+int ff_h264_sei_user_data_unregistered_decode(H264SEIContext *h, GetBitContext *gb,
+                       const struct H264ParamSets *ps, void *logctx);
+
 int ff_h264_sei_decode(H264SEIContext *h, GetBitContext *gb,
                        const struct H264ParamSets *ps, void *logctx);
 
