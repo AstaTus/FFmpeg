@@ -562,7 +562,7 @@ static int decode_nal_units(H264Context *h, const uint8_t *buf, int buf_size)
     h->has_slice = 0;
     h->nal_unit_type= 0;
 
-    if (!(avctx->flags2 & AV_CODEC_FLAG2_CHUNKS)) {
+    if (!(avctx->flags2 & AV_CODEC_FLAG2_CHUNKS) && !(avctx->flags2 & AV_CODEC_SKIP_SEI_UNINIT)) {
         h->current_slice = 0;
         if (!h->first_field) {
             h->cur_pic_ptr = NULL;

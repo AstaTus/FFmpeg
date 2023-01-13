@@ -374,6 +374,12 @@ typedef struct RcOverride{
  * Show all frames before the first keyframe
  */
 #define AV_CODEC_FLAG2_SHOW_ALL       (1 << 22)
+
+/**
+ * Skip SEI unit when packet is truncated
+ */
+#define AV_CODEC_SKIP_SEI_UNINIT      (1 << 23)
+
 /**
  * Export motion vectors through frame side data
  */
