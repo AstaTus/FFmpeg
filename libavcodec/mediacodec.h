@@ -24,8 +24,9 @@
 #define AVCODEC_MEDIACODEC_H
 
 #include "libavcodec/avcodec.h"
+#if CONFIG_MEDIACODEC
 #include "mediacodecdec_common.h"
-
+#endif
 /**
  * This structure holds a reference to a android/view/Surface object that will
  * be used as output by the decoder.
@@ -68,12 +69,12 @@ int av_mediacodec_default_init(AVCodecContext *avctx, AVMediaCodecContext *ctx, 
  * @param avctx codec context
  */
 void av_mediacodec_default_free(AVCodecContext *avctx);
-
+#if CONFIG_MEDIACODEC
 int av_mediacodec_send_packet(AVCodecContext *avctx, AVPacket *pkt, bool wait);
 
 int av_mediacodec_receive_frame(AVCodecContext * avctx, AVFrame * pframe, bool wait);
 
-
+#endif
 /**
  * Opaque structure representing a MediaCodec buffer to render.
  */
@@ -114,5 +115,7 @@ int av_mediacodec_render_buffer_at_time(AVMediaCodecBuffer *buffer, int64_t time
  * @param profile encode profile just usboed for encoder
  * @return 0 on success, < 0 otherwise
  */
+#if CONFIG_MEDIACODEC
 int av_mediacodec_support_codec(enum AVCodecID codec_id, enum AVPixelFormat pix_fmt, int is_encoder, int profile);
+#endif
 #endif /* AVCODEC_MEDIACODEC_H */

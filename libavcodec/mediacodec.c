@@ -285,7 +285,7 @@ int av_mediacodec_render_buffer_at_time(AVMediaCodecBuffer *buffer, int64_t time
 {
     return AVERROR(ENOSYS);
 }
-
+#if CONFIG_MEDIACODEC
 int av_mediacodec_send_packet(AVCodecContext *avctx, AVPacket *pkt, bool wait)
 {
     return AVERROR(ENOSYS);
@@ -295,6 +295,6 @@ int av_mediacodec_receive_frame(AVCodecContext * avctx, AVFrame * pframe, bool w
 {
     return AVERROR(ENOSYS);
 }
-
+#endif
 
 #endif
