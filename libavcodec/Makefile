@@ -16,12 +16,7 @@ HEADERS = ac3_parser.h                                                  \
           dv_profile.h                                                  \
           dxva2.h                                                       \
           jni.h                                                         \
-	  ffjni.h                                                       \
           mediacodec.h                                                  \
-	  mediacodec_surface.h                                          \
-	  mediacodec_sw_buffer.h                                        \
-	  mediacodec_wrapper.h                                          \
-	  mediacodecdec_common.h                                        \
           packet.h                                                      \
           qsv.h                                                         \
           vaapi.h                                                       \
@@ -1201,13 +1196,18 @@ SKIPHEADERS                            += %_tablegen.h                  \
                                           aacenc_quantization_misc.h    \
                                           $(ARCH)/vp56_arith.h          \
 
+
+
+HEADERS-$(CONFIG_JNI)						+= ffjni.h
+HEADERS-$(CONFIG_MEDIACODEC)				+= mediacodecdec_common.h mediacodec_surface.h mediacodec_wrapper.h mediacodec_sw_buffer.h
+
 SKIPHEADERS-$(CONFIG_AMF)              += amfenc.h
 SKIPHEADERS-$(CONFIG_D3D11VA)          += d3d11va.h dxva2_internal.h
 SKIPHEADERS-$(CONFIG_DXVA2)            += dxva2.h dxva2_internal.h
-SKIPHEADERS-$(CONFIG_JNI)              += ffjni.h
+#SKIPHEADERS-$(CONFIG_JNI)              += ffjni.h
 SKIPHEADERS-$(CONFIG_LIBVPX)           += libvpx.h
 SKIPHEADERS-$(CONFIG_LIBWEBP_ENCODER)  += libwebpenc_common.h
-SKIPHEADERS-$(CONFIG_MEDIACODEC)       += mediacodecdec_common.h mediacodec_surface.h mediacodec_wrapper.h mediacodec_sw_buffer.h
+#SKIPHEADERS-$(CONFIG_MEDIACODEC)       += mediacodecdec_common.h mediacodec_surface.h mediacodec_wrapper.h mediacodec_sw_buffer.h
 SKIPHEADERS-$(CONFIG_MEDIAFOUNDATION)  += mf_utils.h
 SKIPHEADERS-$(CONFIG_NVDEC)            += nvdec.h
 SKIPHEADERS-$(CONFIG_NVENC)            += nvenc.h
