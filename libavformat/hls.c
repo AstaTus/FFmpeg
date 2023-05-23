@@ -62,7 +62,8 @@
 enum KeyType {
     KEY_NONE,
     KEY_AES_128,
-    KEY_SAMPLE_AES
+    KEY_SAMPLE_AES,
+    KEY_QINIU_PROTECTION
 };
 
 struct segment {
@@ -214,6 +215,7 @@ typedef struct HLSContext {
     int http_persistent;
     int http_multiple;
     int http_seekable;
+    char * drm_key;
     AVIOContext *playlist_pb;
 } HLSContext;
 
@@ -375,7 +377,7 @@ static void handle_variant_args(struct variant_info *info, const char *key,
 
 struct key_info {
      char uri[MAX_URL_SIZE];
-     char method[11];
+     char method[17];
      char iv[35];
 };
 
@@ -796,17 +798,24 @@ static int parse_playlist(HLSContext *c, const char *url,
             struct key_info info = {{0}};
             ff_parse_key_value(ptr, (ff_parse_key_val_cb) handle_key_args,
                                &info);
+			av_log(c->ctx, AV_LOG_INFO, "method:%s, key:%s, iv:%s\n", info.method,info.uri,info.iv);
             key_type = KEY_NONE;
             has_iv = 0;
             if (!strcmp(info.method, "AES-128"))
                 key_type = KEY_AES_128;
             if (!strcmp(info.method, "SAMPLE-AES"))
                 key_type = KEY_SAMPLE_AES;
+				
             if (!strncmp(info.iv, "0x", 2) || !strncmp(info.iv, "0X", 2)) {
                 ff_hex_to_data(iv, info.iv + 2);
                 has_iv = 1;
             }
+			
             av_strlcpy(key, info.uri, sizeof(key));
+			if(!memcmp(info.method, "QINIU-PROTECTION", strlen("QINIU-PROTECTION"))) {
+                key_type = KEY_QINIU_PROTECTION;
+                memset(key,0x00,MAX_URL_SIZE);
+            }
         } else if (av_strstart(line, "#EXT-X-MEDIA:", &ptr)) {
             struct rendition_info info = {{0}};
             ff_parse_key_value(ptr, (ff_parse_key_val_cb) handle_rendition_args,
@@ -854,7 +863,7 @@ static int parse_playlist(HLSContext *c, const char *url,
                 AV_WB64(cur_init_section->iv + 8, seq);
             }
 
-            if (key_type != KEY_NONE) {
+            if (key_type != KEY_NONE && key_type != KEY_QINIU_PROTECTION) {
                 ff_make_absolute_url(tmp_str, sizeof(tmp_str), url, key);
                 if (!tmp_str[0]) {
                     av_free(cur_init_section);
@@ -914,7 +923,7 @@ static int parse_playlist(HLSContext *c, const char *url,
                     AV_WB64(seg->iv + 8, seq);
                 }
 
-                if (key_type != KEY_NONE) {
+                if (key_type != KEY_NONE && key_type != KEY_QINIU_PROTECTION) {
                     ff_make_absolute_url(tmp_str, sizeof(tmp_str), url, key);
                     if (!tmp_str[0]) {
                         ret = AVERROR_INVALIDDATA;
@@ -1295,8 +1304,25 @@ static int open_input(HLSContext *c, struct playlist *pls, struct segment *seg, 
         av_log(pls->parent, AV_LOG_ERROR,
                "SAMPLE-AES encryption is not supported yet\n");
         ret = AVERROR_PATCHWELCOME;
-    }
-    else
+    } else if(seg->key_type == KEY_QINIU_PROTECTION) {
+        char iv[33] = {0}, key[33], url[MAX_URL_SIZE];
+        ff_data_to_hex(iv, seg->iv, sizeof(seg->iv), 0);
+        ff_data_to_hex(key, c->drm_key, strlen(c->drm_key), 0);
+        iv[32] = key[32] = '\0';
+        if (strstr(seg->url, "://"))
+            snprintf(url, sizeof(url), "crypto+%s", seg->url);
+        else
+            snprintf(url, sizeof(url), "crypto:%s", seg->url);
+
+        av_dict_set(&opts, "key", key, 0);
+        av_dict_set(&opts, "iv", iv, 0);
+
+        ret = open_url(pls->parent, in, url, &c->avio_opts, opts, &is_http);
+        if (ret < 0) {
+            goto cleanup;
+        }
+        ret = 0;
+    } else
       ret = AVERROR(ENOSYS);
 
     /* Seek to the requested position. If this was a HTTP request, the offset
@@ -2437,7 +2463,7 @@ static const AVOption hls_options[] = {
     {"allowed_extensions", "List of file extensions that hls is allowed to access",
         OFFSET(allowed_extensions), AV_OPT_TYPE_STRING,
         {.str = "3gp,aac,avi,ac3,eac3,flac,mkv,m3u8,m4a,m4s,m4v,mpg,mov,mp2,mp3,mp4,mpeg,mpegts,ogg,ogv,oga,ts,vob,wav"},
-        INT_MIN, INT_MAX, FLAGS},
+            INT_MIN, INT_MAX, FLAGS},
     {"max_reload", "Maximum number of times a insufficient list is attempted to be reloaded",
         OFFSET(max_reload), AV_OPT_TYPE_INT, {.i64 = 1000}, 0, INT_MAX, FLAGS},
     {"m3u8_hold_counters", "The maximum number of times to load m3u8 when it refreshes without new segments",
@@ -2448,6 +2474,8 @@ static const AVOption hls_options[] = {
         OFFSET(http_multiple), AV_OPT_TYPE_BOOL, {.i64 = -1}, -1, 1, FLAGS},
     {"http_seekable", "Use HTTP partial requests, 0 = disable, 1 = enable, -1 = auto",
         OFFSET(http_seekable), AV_OPT_TYPE_BOOL, { .i64 = -1}, -1, 1, FLAGS},
+    {"drm_key", "Private DRM decode key",
+            OFFSET(drm_key), AV_OPT_TYPE_STRING, { .str = NULL}, INT_MIN, INT_MAX, FLAGS},
     {NULL}
 };
 
