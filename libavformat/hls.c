@@ -70,7 +70,8 @@
 enum KeyType {
     KEY_NONE,
     KEY_AES_128,
-    KEY_SAMPLE_AES
+    KEY_SAMPLE_AES,
+    KEY_QINIU_PROTECTION
 };
 
 struct segment {
@@ -229,6 +230,7 @@ typedef struct HLSContext {
     int http_multiple;
     int http_seekable;
     int seg_max_retry;
+    char * drm_key;
     AVIOContext *playlist_pb;
     HLSCryptoContext  crypto_ctx;
 } HLSContext;
@@ -392,7 +394,7 @@ static void handle_variant_args(struct variant_info *info, const char *key,
 
 struct key_info {
      char uri[MAX_URL_SIZE];
-     char method[11];
+     char method[17];
      char iv[35];
 };
 
@@ -813,17 +815,24 @@ static int parse_playlist(HLSContext *c, const char *url,
             struct key_info info = {{0}};
             ff_parse_key_value(ptr, (ff_parse_key_val_cb) handle_key_args,
                                &info);
+			av_log(c->ctx, AV_LOG_INFO, "method:%s, key:%s, iv:%s\n", info.method,info.uri,info.iv);
             key_type = KEY_NONE;
             has_iv = 0;
             if (!strcmp(info.method, "AES-128"))
                 key_type = KEY_AES_128;
             if (!strcmp(info.method, "SAMPLE-AES"))
                 key_type = KEY_SAMPLE_AES;
+
             if (!av_strncasecmp(info.iv, "0x", 2)) {
                 ff_hex_to_data(iv, info.iv + 2);
                 has_iv = 1;
             }
+
             av_strlcpy(key, info.uri, sizeof(key));
+			if(!memcmp(info.method, "QINIU-PROTECTION", strlen("QINIU-PROTECTION"))) {
+                key_type = KEY_QINIU_PROTECTION;
+                memset(key,0x00,MAX_URL_SIZE);
+            }
         } else if (av_strstart(line, "#EXT-X-MEDIA:", &ptr)) {
             struct rendition_info info = {{0}};
             ff_parse_key_value(ptr, (ff_parse_key_val_cb) handle_rendition_args,
@@ -881,7 +890,7 @@ static int parse_playlist(HLSContext *c, const char *url,
                 AV_WB64(cur_init_section->iv + 8, seq);
             }
 
-            if (key_type != KEY_NONE) {
+            if (key_type != KEY_NONE && key_type != KEY_QINIU_PROTECTION) {
                 ff_make_absolute_url(tmp_str, sizeof(tmp_str), url, key);
                 if (!tmp_str[0]) {
                     av_free(cur_init_section);
@@ -956,7 +965,7 @@ static int parse_playlist(HLSContext *c, const char *url,
                     AV_WB64(seg->iv + 8, seq);
                 }
 
-                if (key_type != KEY_NONE) {
+                if (key_type != KEY_NONE && key_type != KEY_QINIU_PROTECTION) {
                     ff_make_absolute_url(tmp_str, sizeof(tmp_str), url, key);
                     if (!tmp_str[0]) {
                         ret = AVERROR_INVALIDDATA;
@@ -1326,6 +1335,24 @@ static int open_input(HLSContext *c, struct playlist *pls, struct segment *seg, 
         char iv[33], key[33], url[MAX_URL_SIZE];
         ff_data_to_hex(iv, seg->iv, sizeof(seg->iv), 0);
         ff_data_to_hex(key, pls->key, sizeof(pls->key), 0);
+        if (strstr(seg->url, "://"))
+            snprintf(url, sizeof(url), "crypto+%s", seg->url);
+        else
+            snprintf(url, sizeof(url), "crypto:%s", seg->url);
+
+        av_dict_set(&opts, "key", key, 0);
+        av_dict_set(&opts, "iv", iv, 0);
+
+        ret = open_url(pls->parent, in, url, &c->avio_opts, opts, &is_http);
+        if (ret < 0) {
+            goto cleanup;
+        }
+        ret = 0;
+    } else if(seg->key_type == KEY_QINIU_PROTECTION) {
+        char iv[33] = {0}, key[33], url[MAX_URL_SIZE];
+        ff_data_to_hex(iv, seg->iv, sizeof(seg->iv), 0);
+        ff_data_to_hex(key, c->drm_key, strlen(c->drm_key), 0);
+        iv[32] = key[32] = '\0';
         if (strstr(seg->url, "://"))
             snprintf(url, sizeof(url), "crypto+%s", seg->url);
         else
@@ -2628,6 +2655,8 @@ static const AVOption hls_options[] = {
         OFFSET(seg_format_opts), AV_OPT_TYPE_DICT, {.str = NULL}, 0, 0, FLAGS},
     {"seg_max_retry", "Maximum number of times to reload a segment on error.",
      OFFSET(seg_max_retry), AV_OPT_TYPE_INT, {.i64 = 0}, 0, INT_MAX, FLAGS},
+    {"drm_key", "Private DRM decode key",
+            OFFSET(drm_key), AV_OPT_TYPE_STRING, { .str = NULL}, INT_MIN, INT_MAX, FLAGS},
     {NULL}
 };
 
