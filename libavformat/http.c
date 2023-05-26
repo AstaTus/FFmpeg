@@ -195,7 +195,7 @@ typedef struct HTTPContext {
     int is_multi_client;
     HandshakeState handshake_step;
     int is_connected_server;
-    int64_t protocol_event_context_ptr;
+    char * protocol_event_context_ptr_text;
     AVProtocolEventDispatcherContext * protocol_event_dispatcher_context;
 } HTTPContext;
 
@@ -241,7 +241,7 @@ static const AVOption options[] = {
     { "listen", "listen on HTTP", OFFSET(listen), AV_OPT_TYPE_INT, { .i64 = 0 }, 0, 2, D | E },
     { "resource", "The resource requested by a client", OFFSET(resource), AV_OPT_TYPE_STRING, { .str = NULL }, 0, 0, E },
     { "reply_code", "The http status code to return to a client", OFFSET(reply_code), AV_OPT_TYPE_INT, { .i64 = 200}, INT_MIN, 599, E},
-    { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr), AV_OPT_TYPE_PTR, { .i64 = 0 }, INT64_MIN, INT64_MAX, .flags = D|E },
+    { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr_text), AV_OPT_TYPE_STRING, { .str = NULL }, INT_MIN, INT_MAX,  D },
     { NULL }
 };
 
@@ -690,7 +690,8 @@ static int http_open(URLContext *h, const char *uri, int flags,
 {
     HTTPContext *s = h->priv_data;
     int ret;
-    s->protocol_event_dispatcher_context = (AVProtocolEventDispatcherContext *) (intptr_t)s->protocol_event_context_ptr;
+    s->protocol_event_dispatcher_context = NULL;
+    sscanf(s->protocol_event_context_ptr_text, "%p", &s->protocol_event_dispatcher_context);
 
     if( s->seekable == 1 )
         h->is_streamed = 0;
