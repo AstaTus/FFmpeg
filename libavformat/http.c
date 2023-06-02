@@ -691,7 +691,9 @@ static int http_open(URLContext *h, const char *uri, int flags,
     HTTPContext *s = h->priv_data;
     int ret;
     s->protocol_event_dispatcher_context = NULL;
-    sscanf(s->protocol_event_context_ptr_text, "%p", &s->protocol_event_dispatcher_context);
+    if (s->protocol_event_context_ptr_text != NULL) {
+        sscanf(s->protocol_event_context_ptr_text, "%p", &s->protocol_event_dispatcher_context);
+    }
 
     if( s->seekable == 1 )
         h->is_streamed = 0;

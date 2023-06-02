@@ -65,6 +65,7 @@ static const AVOption options[] = {
     { "tcp_mss",     "Maximum segment size for outgoing TCP packets",          OFFSET(tcp_mss),     AV_OPT_TYPE_INT, { .i64 = -1 },         -1, INT_MAX, .flags = D|E },
 #endif /* !HAVE_WINSOCK2_H */
     { "protocol_event_dispatcher", "notifiy protocol event by AVProtocolEventContext",    OFFSET(protocol_event_context_ptr_text), AV_OPT_TYPE_STRING, { .str = NULL }, INT_MIN, INT_MAX,  D },
+
     { NULL }
 };
 
@@ -186,7 +187,9 @@ static int tcp_open(URLContext *h, const char *uri, int flags)
     s->open_timeout = 5000000;
 
     s->protocol_event_dispatcher_context = NULL;
-    sscanf(s->protocol_event_context_ptr_text, "%p", &s->protocol_event_dispatcher_context);
+    if (s->protocol_event_context_ptr_text != NULL) {
+        sscanf(s->protocol_event_context_ptr_text, "%p", &s->protocol_event_dispatcher_context);
+    }
 
     av_url_split(proto, sizeof(proto), NULL, 0, hostname, sizeof(hostname),
         &port, path, sizeof(path), uri);
