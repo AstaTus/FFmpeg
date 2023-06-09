@@ -216,6 +216,7 @@ typedef struct HLSContext {
     int http_multiple;
     int http_seekable;
     char * drm_key;
+    int reload_order;
     AVIOContext *playlist_pb;
 } HLSContext;
 
@@ -1558,7 +1559,11 @@ reload:
             av_log(v->parent, AV_LOG_WARNING, "Failed to open segment %"PRId64" of playlist %d\n",
                    v->cur_seq_no,
                    v->index);
-            v->cur_seq_no += 1;
+            if (c->reload_order) {
+                av_usleep(1000*1000);
+            } else {
+                v->cur_seq_no += 1;
+            }
             goto reload;
         }
         just_opened = 1;
@@ -2476,6 +2481,8 @@ static const AVOption hls_options[] = {
         OFFSET(http_seekable), AV_OPT_TYPE_BOOL, { .i64 = -1}, -1, 1, FLAGS},
     {"drm_key", "Private DRM decode key",
             OFFSET(drm_key), AV_OPT_TYPE_STRING, { .str = NULL}, INT_MIN, INT_MAX, FLAGS},
+    {"reload_order", "if request is failed don't skip segement",
+            OFFSET(reload_order), AV_OPT_TYPE_BOOL, {.i64 = 0}, 0, 1, FLAGS},
     {NULL}
 };
 
