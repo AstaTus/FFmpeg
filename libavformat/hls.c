@@ -231,6 +231,7 @@ typedef struct HLSContext {
     int http_seekable;
     int seg_max_retry;
     char * drm_key;
+    int reload_order;
     AVIOContext *playlist_pb;
     HLSCryptoContext  crypto_ctx;
 } HLSContext;
@@ -1604,15 +1605,20 @@ reload:
             av_log(v->parent, AV_LOG_WARNING, "Failed to open segment %"PRId64" of playlist %d\n",
                    v->cur_seq_no,
                    v->index);
-            if (segment_retries >= c->seg_max_retry) {
-                av_log(v->parent, AV_LOG_WARNING, "Segment %"PRId64" of playlist %d failed too many times, skipping\n",
-                       v->cur_seq_no,
-                       v->index);
-                v->cur_seq_no++;
-                segment_retries = 0;
+            if (c->reload_order) {
+                av_usleep(1000*1000);
             } else {
-                segment_retries++;
+                if (segment_retries >= c->seg_max_retry) {
+                    av_log(v->parent, AV_LOG_WARNING, "Segment %"PRId64" of playlist %d failed too many times, skipping\n",
+                            v->cur_seq_no,
+                            v->index);
+                    v->cur_seq_no++;
+                    segment_retries = 0;
+                } else {
+                    segment_retries++;
+                }
             }
+
             goto reload;
         }
         segment_retries = 0;
@@ -2657,6 +2663,8 @@ static const AVOption hls_options[] = {
      OFFSET(seg_max_retry), AV_OPT_TYPE_INT, {.i64 = 0}, 0, INT_MAX, FLAGS},
     {"drm_key", "Private DRM decode key",
             OFFSET(drm_key), AV_OPT_TYPE_STRING, { .str = NULL}, INT_MIN, INT_MAX, FLAGS},
+    {"reload_order", "if request is failed don't skip segement",
+            OFFSET(reload_order), AV_OPT_TYPE_BOOL, {.i64 = 0}, 0, 1, FLAGS},
     {NULL}
 };
 
