@@ -2391,6 +2391,9 @@ static int hls_read_seek(AVFormatContext *s, int stream_index,
     if (0 < duration && duration < seek_timestamp - first_timestamp)
         return AVERROR(EIO);
 
+    if (first_timestamp>=seek_timestamp){
+        seek_timestamp = first_timestamp;
+    }
     /* find the playlist with the specified stream */
     for (i = 0; i < c->n_playlists; i++) {
         struct playlist *pls = c->playlists[i];
