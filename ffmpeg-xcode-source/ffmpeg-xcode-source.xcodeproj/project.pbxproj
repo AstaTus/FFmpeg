@@ -405,6 +405,17 @@
 		BADF2E112A791C340030D66C /* videotoolbox.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1F492A78E20E0030D66C /* videotoolbox.h */; };
 		BADF2E122A791C3D0030D66C /* vorbis_parser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF25612A78E2120030D66C /* vorbis_parser.h */; };
 		BADF2E132A791C460030D66C /* xvmc.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1F4D2A78E20E0030D66C /* xvmc.h */; };
+		BADF2E142A791CDA0030D66C /* pthread_slice.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E972A78E20D0030D66C /* pthread_slice.c */; };
+		BADF2E152A791D0F0030D66C /* dct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF22192A78E20F0030D66C /* dct.c */; };
+		BADF2E162A791D580030D66C /* dct32_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF238E2A78E2100030D66C /* dct32_fixed.c */; };
+		BADF2E172A791D580030D66C /* dct32_float.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF231A2A78E2100030D66C /* dct32_float.c */; };
+		BADF2E182A791E5A0030D66C /* error_resilience.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23B52A78E2100030D66C /* error_resilience.c */; };
+		BADF2E192A791EBA0030D66C /* fft_template.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF220F2A78E20F0030D66C /* fft_template.c */; };
+		BADF2E1A2A791F480030D66C /* mdct_template.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20FD2A78E20F0030D66C /* mdct_template.c */; };
+		BADF2E1B2A791FC70030D66C /* hap.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF22082A78E20F0030D66C /* hap.c */; };
+		BADF2E1C2A7920020030D66C /* rdft.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E5C2A78E20D0030D66C /* rdft.c */; };
+		BADF2E1D2A7920B00030D66C /* pthread_frame.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E682A78E20D0030D66C /* pthread_frame.c */; };
+		BADF2E1E2A7920F50030D66C /* pthread.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E5B2A78E20D0030D66C /* pthread.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -4560,7 +4571,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BADF2D432A790D190030D66C /* utils.c in Sources */,
+				BADF2E1D2A7920B00030D66C /* pthread_frame.c in Sources */,
+				BADF2E1E2A7920F50030D66C /* pthread.c in Sources */,
+				BADF2E142A791CDA0030D66C /* pthread_slice.c in Sources */,
+				BADF2E1A2A791F480030D66C /* mdct_template.c in Sources */,
+				BADF2E1B2A791FC70030D66C /* hap.c in Sources */,
+				BADF2E1C2A7920020030D66C /* rdft.c in Sources */,
+				BADF2E192A791EBA0030D66C /* fft_template.c in Sources */,
+				BADF2E152A791D0F0030D66C /* dct.c in Sources */,
+				BADF2E182A791E5A0030D66C /* error_resilience.c in Sources */,
+				BADF2E162A791D580030D66C /* dct32_fixed.c in Sources */,
+				BADF2E172A791D580030D66C /* dct32_float.c in Sources */,
 				BADF2DD12A7919770030D66C /* fmtconvert_neon.S in Sources */,
 				BADF2DD22A7919770030D66C /* vp9mc_aarch64.S in Sources */,
 				BADF2DD32A7919770030D66C /* h264qpel_neon.S in Sources */,
@@ -4592,6 +4613,7 @@
 				BADF2DED2A7919770030D66C /* videodsp.S in Sources */,
 				BADF2DCF2A79185F0030D66C /* mpeg4video_parser.c in Sources */,
 				BADF2DD02A7918B80030D66C /* mpegaudio_parser.c in Sources */,
+				BADF2D432A790D190030D66C /* utils.c in Sources */,
 				BADF2DA42A79153B0030D66C /* h263data.c in Sources */,
 				BADF2DA22A79152A0030D66C /* mpeg4video.c in Sources */,
 				BADF2DA12A79151C0030D66C /* ituh263dec.c in Sources */,
