@@ -41,7 +41,8 @@
 #include "bprint.h"
 
 #include <float.h>
-
+#include "internal.h"
+#include "intmath.h"
 const AVOption *av_opt_next(const void *obj, const AVOption *last)
 {
     const AVClass *class;

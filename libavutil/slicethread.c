@@ -21,7 +21,7 @@
 #include "mem.h"
 #include "thread.h"
 #include "avassert.h"
-
+#include "internal.h"
 #if HAVE_PTHREADS || HAVE_W32THREADS || HAVE_OS2THREADS
 
 typedef struct WorkerContext {
