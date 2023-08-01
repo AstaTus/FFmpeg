@@ -381,6 +381,30 @@
 		BADF2DEB2A7919770030D66C /* mdct_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25532A78E2120030D66C /* mdct_neon.S */; };
 		BADF2DEC2A7919770030D66C /* synth_filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25562A78E2120030D66C /* synth_filter_neon.S */; };
 		BADF2DED2A7919770030D66C /* videodsp.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF255B2A78E2120030D66C /* videodsp.S */; };
+		BADF2DFC2A791B7E0030D66C /* ac3_parser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF24AD2A78E2110030D66C /* ac3_parser.h */; };
+		BADF2DFD2A791B870030D66C /* adts_parser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1D7D2A78E20D0030D66C /* adts_parser.h */; };
+		BADF2DFE2A791B8E0030D66C /* avcodec.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1D912A78E20D0030D66C /* avcodec.h */; };
+		BADF2DFF2A791B960030D66C /* avdct.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF23682A78E2100030D66C /* avdct.h */; };
+		BADF2E002A791B9E0030D66C /* avfft.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF20F02A78E20F0030D66C /* avfft.h */; };
+		BADF2E012A791BAC0030D66C /* bsf.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF231D2A78E2100030D66C /* bsf.h */; };
+		BADF2E022A791BB40030D66C /* codec_desc.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1F1F2A78E20E0030D66C /* codec_desc.h */; };
+		BADF2E032A791BBC0030D66C /* codec_id.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF23292A78E2100030D66C /* codec_id.h */; };
+		BADF2E042A791BC50030D66C /* codec_par.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1EA22A78E20D0030D66C /* codec_par.h */; };
+		BADF2E052A791BCD0030D66C /* codec.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF21882A78E20F0030D66C /* codec.h */; };
+		BADF2E062A791BD50030D66C /* d3d11va.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF209A2A78E20E0030D66C /* d3d11va.h */; };
+		BADF2E072A791BDE0030D66C /* dirac.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF23552A78E2100030D66C /* dirac.h */; };
+		BADF2E082A791BE80030D66C /* dv_profile.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF25F12A78E2130030D66C /* dv_profile.h */; };
+		BADF2E092A791BEF0030D66C /* dxva2.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF256E2A78E2120030D66C /* dxva2.h */; };
+		BADF2E0A2A791BF70030D66C /* jni.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF21D02A78E20F0030D66C /* jni.h */; };
+		BADF2E0B2A791BFF0030D66C /* mediacodec.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1FD42A78E20E0030D66C /* mediacodec.h */; };
+		BADF2E0C2A791C060030D66C /* packet.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF22FA2A78E2100030D66C /* packet.h */; };
+		BADF2E0D2A791C0E0030D66C /* qsv.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1EC92A78E20D0030D66C /* qsv.h */; };
+		BADF2E0E2A791C150030D66C /* vaapi.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1EF32A78E20D0030D66C /* vaapi.h */; };
+		BADF2E0F2A791C240030D66C /* vdpau.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1E6E2A78E20D0030D66C /* vdpau.h */; };
+		BADF2E102A791C2C0030D66C /* version.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1E592A78E20D0030D66C /* version.h */; };
+		BADF2E112A791C340030D66C /* videotoolbox.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1F492A78E20E0030D66C /* videotoolbox.h */; };
+		BADF2E122A791C3D0030D66C /* vorbis_parser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF25612A78E2120030D66C /* vorbis_parser.h */; };
+		BADF2E132A791C460030D66C /* xvmc.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF1F4D2A78E20E0030D66C /* xvmc.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -496,6 +520,30 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				BADF2E0E2A791C150030D66C /* vaapi.h in CopyFiles */,
+				BADF2E112A791C340030D66C /* videotoolbox.h in CopyFiles */,
+				BADF2E132A791C460030D66C /* xvmc.h in CopyFiles */,
+				BADF2E102A791C2C0030D66C /* version.h in CopyFiles */,
+				BADF2E122A791C3D0030D66C /* vorbis_parser.h in CopyFiles */,
+				BADF2E0B2A791BFF0030D66C /* mediacodec.h in CopyFiles */,
+				BADF2E0F2A791C240030D66C /* vdpau.h in CopyFiles */,
+				BADF2E062A791BD50030D66C /* d3d11va.h in CopyFiles */,
+				BADF2E0C2A791C060030D66C /* packet.h in CopyFiles */,
+				BADF2E042A791BC50030D66C /* codec_par.h in CopyFiles */,
+				BADF2E032A791BBC0030D66C /* codec_id.h in CopyFiles */,
+				BADF2E0D2A791C0E0030D66C /* qsv.h in CopyFiles */,
+				BADF2E0A2A791BF70030D66C /* jni.h in CopyFiles */,
+				BADF2E092A791BEF0030D66C /* dxva2.h in CopyFiles */,
+				BADF2DFD2A791B870030D66C /* adts_parser.h in CopyFiles */,
+				BADF2E052A791BCD0030D66C /* codec.h in CopyFiles */,
+				BADF2E072A791BDE0030D66C /* dirac.h in CopyFiles */,
+				BADF2E082A791BE80030D66C /* dv_profile.h in CopyFiles */,
+				BADF2E022A791BB40030D66C /* codec_desc.h in CopyFiles */,
+				BADF2E012A791BAC0030D66C /* bsf.h in CopyFiles */,
+				BADF2DFF2A791B960030D66C /* avdct.h in CopyFiles */,
+				BADF2E002A791B9E0030D66C /* avfft.h in CopyFiles */,
+				BADF2DFE2A791B8E0030D66C /* avcodec.h in CopyFiles */,
+				BADF2DFC2A791B7E0030D66C /* ac3_parser.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4512,6 +4560,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BADF2D432A790D190030D66C /* utils.c in Sources */,
 				BADF2DD12A7919770030D66C /* fmtconvert_neon.S in Sources */,
 				BADF2DD22A7919770030D66C /* vp9mc_aarch64.S in Sources */,
 				BADF2DD32A7919770030D66C /* h264qpel_neon.S in Sources */,
@@ -4679,7 +4728,6 @@
 				BADF2D4B2A790F290030D66C /* cabac.c in Sources */,
 				BADF2D462A790ED60030D66C /* adts_header.c in Sources */,
 				BADF2D4F2A790F6B0030D66C /* cbs_h2645.c in Sources */,
-				BADF2D432A790D190030D66C /* utils.c in Sources */,
 				BADF2D4D2A790F4C0030D66C /* cbs_bsf.c in Sources */,
 				BADF2D482A790EF60030D66C /* atsc_a53.c in Sources */,
 				BADF2D3F2A790CF60030D66C /* parsers.c in Sources */,
@@ -4893,6 +4941,13 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W2TP34G2MM;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../libavcodec\"",
+					"\"$(SRCROOT)/../libavutil\"",
+					"\"$(SRCROOT)/\"",
+					"\"$(SRCROOT)/..\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -4905,6 +4960,13 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = W2TP34G2MM;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../libavcodec\"",
+					"\"$(SRCROOT)/../libavutil\"",
+					"\"$(SRCROOT)/\"",
+					"\"$(SRCROOT)/..\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
