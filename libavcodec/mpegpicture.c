@@ -24,6 +24,7 @@
 #include "libavutil/common.h"
 #include "libavutil/pixdesc.h"
 #include "libavutil/imgutils.h"
+#include "libavutil/internal.h"
 
 #include "avcodec.h"
 #include "motion_est.h"

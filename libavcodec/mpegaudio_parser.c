@@ -23,6 +23,7 @@
 #include "parser.h"
 #include "mpegaudiodecheader.h"
 #include "libavutil/common.h"
+#include "libavutil/log.c"
 #include "libavformat/apetag.h" // for APE tag.
 #include "libavformat/id3v1.h" // for ID3v1_TAG_SIZE
 

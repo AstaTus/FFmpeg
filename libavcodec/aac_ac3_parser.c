@@ -24,7 +24,7 @@
 #include "libavutil/common.h"
 #include "parser.h"
 #include "aac_ac3_parser.h"
-
+#include "config.h"
 int ff_aac_ac3_parse(AVCodecParserContext *s1,
                      AVCodecContext *avctx,
                      const uint8_t **poutbuf, int *poutbuf_size,

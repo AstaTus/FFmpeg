@@ -22,6 +22,7 @@
 
 #include "avcodec.h"
 #include "version.h"
+#include "libavutil/internal.h"
 
 extern AVCodecParser ff_aac_parser;
 extern AVCodecParser ff_aac_latm_parser;

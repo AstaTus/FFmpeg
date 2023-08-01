@@ -27,6 +27,7 @@
 
 #include "libavutil/log.h"
 
+#include "libavutil/internal.h"
 #include "get_bits.h"
 #include "parser.h"
 #include "xiph.h"

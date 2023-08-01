@@ -20,6 +20,7 @@
  */
 #include "faanidct.h"
 #include "libavutil/common.h"
+#include "libavutil/internal.h"
 
 /* To allow switching to double. */
 typedef float FLOAT;

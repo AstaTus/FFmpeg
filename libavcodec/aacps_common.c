@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include "libavutil/common.h"
 #include "libavutil/thread.h"
+#include "libavutil/log2_tab.c"
 #include "aacps.h"
 #include "get_bits.h"
 #include "aacpsdata.c"

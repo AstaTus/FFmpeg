@@ -18,6 +18,7 @@
 
 #include "bsf_internal.h"
 #include "cbs_bsf.h"
+#include "libavutil/internal.h"
 
 static int cbs_bsf_update_side_data(AVBSFContext *bsf, AVPacket *pkt)
 {

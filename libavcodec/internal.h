@@ -34,6 +34,7 @@
 #include "avcodec.h"
 #include "config.h"
 
+#include "libavutil/internal.h"
 /**
  * The codec does not modify any global variables in the init function,
  * allowing to call the init function without locking any global mutexes.

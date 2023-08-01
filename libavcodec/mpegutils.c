@@ -26,6 +26,7 @@
 #include "libavutil/motion_vector.h"
 #include "libavutil/avassert.h"
 
+#include "libavutil/internal.h"
 #include "avcodec.h"
 #include "mpegutils.h"
 

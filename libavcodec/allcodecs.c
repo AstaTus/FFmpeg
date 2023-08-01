@@ -28,6 +28,7 @@
 #include "libavutil/thread.h"
 #include "avcodec.h"
 #include "version.h"
+#include "libavutil/internal.h"
 
 extern AVCodec ff_a64multi_encoder;
 extern AVCodec ff_a64multi5_encoder;

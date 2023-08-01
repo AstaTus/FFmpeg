@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "libavutil/intmath.h"
 static int FUNC(filler_payload)
     (CodedBitstreamContext *ctx, RWContext *rw,
      SEIRawFillerPayload *current, SEIMessageState *state)

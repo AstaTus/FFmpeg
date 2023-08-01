@@ -24,6 +24,7 @@
 #include "libavutil/buffer.h"
 #include "libavutil/common.h"
 #include "libavutil/opt.h"
+#include "libavutil/internal.h"
 
 #include "cbs.h"
 #include "cbs_internal.h"

@@ -19,6 +19,7 @@
 #include "libavutil/avstring.h"
 #include "libavutil/display.h"
 #include "libavutil/common.h"
+#include "libavutil/internal.h"
 #include "libavutil/opt.h"
 
 #include "bsf.h"

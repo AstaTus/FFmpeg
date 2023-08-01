@@ -22,7 +22,7 @@
 #define AVCODEC_AV1_PARSE_H
 
 #include <stdint.h>
-
+#include "libavutil/intmath.h"
 #include "av1.h"
 #include "avcodec.h"
 #include "get_bits.h"
