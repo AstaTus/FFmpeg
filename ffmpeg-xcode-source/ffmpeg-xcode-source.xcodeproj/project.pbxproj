@@ -213,6 +213,174 @@
 		BADF2D432A790D190030D66C /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21D22A78E20F0030D66C /* utils.c */; };
 		BADF2D442A790D220030D66C /* vorbis_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20A32A78E20E0030D66C /* vorbis_parser.c */; };
 		BADF2D452A790D2B0030D66C /* xiph.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25C62A78E2120030D66C /* xiph.c */; };
+		BADF2D462A790ED60030D66C /* adts_header.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25BF2A78E2120030D66C /* adts_header.c */; };
+		BADF2D472A790EE30030D66C /* mpeg4audio.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20AA2A78E20E0030D66C /* mpeg4audio.c */; };
+		BADF2D482A790EF60030D66C /* atsc_a53.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F712A78E20E0030D66C /* atsc_a53.c */; };
+		BADF2D492A790F030030D66C /* blockdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23C12A78E2100030D66C /* blockdsp.c */; };
+		BADF2D4A2A790F160030D66C /* bswapdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F162A78E20E0030D66C /* bswapdsp.c */; };
+		BADF2D4B2A790F290030D66C /* cabac.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25FC2A78E2130030D66C /* cabac.c */; };
+		BADF2D4C2A790F400030D66C /* cbs.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF258D2A78E2120030D66C /* cbs.c */; };
+		BADF2D4D2A790F4C0030D66C /* cbs_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21EF2A78E20F0030D66C /* cbs_bsf.c */; };
+		BADF2D4E2A790F5A0030D66C /* cbs_av1.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23CA2A78E2100030D66C /* cbs_av1.c */; };
+		BADF2D4F2A790F6B0030D66C /* cbs_h2645.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F1A2A78E20E0030D66C /* cbs_h2645.c */; };
+		BADF2D502A790F730030D66C /* cbs_sei.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F012A78E20D0030D66C /* cbs_sei.c */; };
+		BADF2D512A790F7F0030D66C /* h2645_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20542A78E20E0030D66C /* h2645_parse.c */; };
+		BADF2D522A790F960030D66C /* cbs_mpeg2.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F532A78E20E0030D66C /* cbs_mpeg2.c */; };
+		BADF2D532A790FA40030D66C /* cbs_vp9.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21A12A78E20F0030D66C /* cbs_vp9.c */; };
+		BADF2D542A790FB70030D66C /* faandct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23612A78E2100030D66C /* faandct.c */; };
+		BADF2D552A790FC50030D66C /* faanidct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E252A78E20D0030D66C /* faanidct.c */; };
+		BADF2D562A790FD80030D66C /* fdctdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1ED02A78E20D0030D66C /* fdctdsp.c */; };
+		BADF2D572A790FE20030D66C /* jfdctfst.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23162A78E2100030D66C /* jfdctfst.c */; };
+		BADF2D582A790FE70030D66C /* jfdctint.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF202F2A78E20E0030D66C /* jfdctint.c */; };
+		BADF2D592A7910050030D66C /* flacdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20E02A78E20F0030D66C /* flacdsp.c */; };
+		BADF2D5A2A79101A0030D66C /* golomb.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DB22A78E20D0030D66C /* golomb.c */; };
+		BADF2D5B2A79102D0030D66C /* h263dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23152A78E2100030D66C /* h263dsp.c */; };
+		BADF2D5C2A7910410030D66C /* h264chroma.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21072A78E20F0030D66C /* h264chroma.c */; };
+		BADF2D5D2A7910540030D66C /* h264dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23BC2A78E2100030D66C /* h264dsp.c */; };
+		BADF2D5E2A79105E0030D66C /* h264idct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1D742A78E20D0030D66C /* h264idct.c */; };
+		BADF2D5F2A79106D0030D66C /* h264_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21992A78E20F0030D66C /* h264_parse.c */; };
+		BADF2D602A79107F0030D66C /* h264_ps.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23AD2A78E2100030D66C /* h264_ps.c */; };
+		BADF2D612A79108E0030D66C /* h264pred.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20A22A78E20E0030D66C /* h264pred.c */; };
+		BADF2D622A79109F0030D66C /* h264qpel.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24E12A78E2110030D66C /* h264qpel.c */; };
+		BADF2D632A7910B30030D66C /* hevc_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DD22A78E20D0030D66C /* hevc_parse.c */; };
+		BADF2D642A7910CD0030D66C /* hevc_ps.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1D782A78E20D0030D66C /* hevc_ps.c */; };
+		BADF2D652A7910D40030D66C /* hevc_sei.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1EEB2A78E20D0030D66C /* hevc_sei.c */; };
+		BADF2D662A7910DB0030D66C /* hevc_data.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20B42A78E20E0030D66C /* hevc_data.c */; };
+		BADF2D672A7910E40030D66C /* dynamic_hdr10_plus.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25792A78E2120030D66C /* dynamic_hdr10_plus.c */; };
+		BADF2D682A7910F70030D66C /* hpeldsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF234A2A78E2100030D66C /* hpeldsp.c */; };
+		BADF2D692A79110F0030D66C /* idctdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21A52A78E20F0030D66C /* idctdsp.c */; };
+		BADF2D6A2A7911190030D66C /* simple_idct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23C62A78E2100030D66C /* simple_idct.c */; };
+		BADF2D6B2A79111F0030D66C /* jrevdct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21822A78E20F0030D66C /* jrevdct.c */; };
+		BADF2D6C2A7911360030D66C /* mdct15.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24BB2A78E2110030D66C /* mdct15.c */; };
+		BADF2D6D2A79115E0030D66C /* mpegaudiodata.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21A32A78E20F0030D66C /* mpegaudiodata.c */; };
+		BADF2D6E2A7911770030D66C /* me_cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25962A78E2120030D66C /* me_cmp.c */; };
+		BADF2D6F2A7911860030D66C /* mpeg_er.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F5C2A78E20E0030D66C /* mpeg_er.c */; };
+		BADF2D702A79119E0030D66C /* mpegaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21BA2A78E20F0030D66C /* mpegaudio.c */; };
+		BADF2D712A7911B40030D66C /* mpegaudiodec_common.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23F42A78E2110030D66C /* mpegaudiodec_common.c */; };
+		BADF2D722A7911CE0030D66C /* mpegaudiodsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1ED42A78E20D0030D66C /* mpegaudiodsp.c */; };
+		BADF2D732A7911D30030D66C /* mpegaudiodsp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23972A78E2100030D66C /* mpegaudiodsp_data.c */; };
+		BADF2D742A7911DC0030D66C /* mpegaudiodsp_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DB12A78E20D0030D66C /* mpegaudiodsp_fixed.c */; };
+		BADF2D752A7911DF0030D66C /* mpegaudiodsp_float.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DF12A78E20D0030D66C /* mpegaudiodsp_float.c */; };
+		BADF2D762A7911F30030D66C /* mpegaudiodecheader.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23C82A78E2100030D66C /* mpegaudiodecheader.c */; };
+		BADF2D772A7912170030D66C /* mpegvideo.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F7C2A78E20E0030D66C /* mpegvideo.c */; };
+		BADF2D782A7912250030D66C /* mpegvideodsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F302A78E20E0030D66C /* mpegvideodsp.c */; };
+		BADF2D792A7912310030D66C /* rl.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF22042A78E20F0030D66C /* rl.c */; };
+		BADF2D7A2A7912480030D66C /* mpegvideo_motion.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25982A78E2120030D66C /* mpegvideo_motion.c */; };
+		BADF2D7B2A7912560030D66C /* mpegutils.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25D72A78E2120030D66C /* mpegutils.c */; };
+		BADF2D7C2A7912630030D66C /* mpegvideodata.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20EA2A78E20F0030D66C /* mpegvideodata.c */; };
+		BADF2D7D2A79126C0030D66C /* mpegpicture.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20C22A78E20E0030D66C /* mpegpicture.c */; };
+		BADF2D7E2A7912800030D66C /* pixblockdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20FC2A78E20F0030D66C /* pixblockdsp.c */; };
+		BADF2D7F2A7912980030D66C /* qpeldsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FD62A78E20E0030D66C /* qpeldsp.c */; };
+		BADF2D802A7912B20030D66C /* sinewin.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23D72A78E2110030D66C /* sinewin.c */; };
+		BADF2D812A7912C20030D66C /* startcode.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FD72A78E20E0030D66C /* startcode.c */; };
+		BADF2D822A7912DA0030D66C /* videodsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20642A78E20E0030D66C /* videodsp.c */; };
+		BADF2D832A7912EC0030D66C /* aac_adtstoasc_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21922A78E20F0030D66C /* aac_adtstoasc_bsf.c */; };
+		BADF2D842A79130B0030D66C /* av1_frame_merge_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF258E2A78E2120030D66C /* av1_frame_merge_bsf.c */; };
+		BADF2D852A79130D0030D66C /* av1_frame_split_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF203E2A78E20E0030D66C /* av1_frame_split_bsf.c */; };
+		BADF2D862A7913210030D66C /* av1_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF218F2A78E20F0030D66C /* av1_metadata_bsf.c */; };
+		BADF2D872A7913350030D66C /* eac3_core_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FE02A78E20E0030D66C /* eac3_core_bsf.c */; };
+		BADF2D882A7913470030D66C /* extract_extradata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F622A78E20E0030D66C /* extract_extradata_bsf.c */; };
+		BADF2D892A7913540030D66C /* av1_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1EB12A78E20D0030D66C /* av1_parse.c */; };
+		BADF2D8A2A7913760030D66C /* filter_units_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20172A78E20E0030D66C /* filter_units_bsf.c */; };
+		BADF2D8B2A79138E0030D66C /* h264_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23592A78E2100030D66C /* h264_metadata_bsf.c */; };
+		BADF2D8C2A7913960030D66C /* h264_levels.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20D22A78E20E0030D66C /* h264_levels.c */; };
+		BADF2D8D2A7913AF0030D66C /* h264_mp4toannexb_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FD92A78E20E0030D66C /* h264_mp4toannexb_bsf.c */; };
+		BADF2D8E2A7913C00030D66C /* h264_redundant_pps_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23242A78E2100030D66C /* h264_redundant_pps_bsf.c */; };
+		BADF2D8F2A7913D30030D66C /* hapqa_extract_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E3F2A78E20D0030D66C /* hapqa_extract_bsf.c */; };
+		BADF2D902A7913E80030D66C /* h265_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21A72A78E20F0030D66C /* h265_metadata_bsf.c */; };
+		BADF2D912A7913F30030D66C /* h265_profile_level.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24E62A78E2110030D66C /* h265_profile_level.c */; };
+		BADF2D922A79140F0030D66C /* mpeg2_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20F22A78E20F0030D66C /* mpeg2_metadata_bsf.c */; };
+		BADF2D932A79141E0030D66C /* null_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21AB2A78E20F0030D66C /* null_bsf.c */; };
+		BADF2D942A7914320030D66C /* opus_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20352A78E20E0030D66C /* opus_metadata_bsf.c */; };
+		BADF2D952A79144B0030D66C /* pcm_rechunk_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20532A78E20E0030D66C /* pcm_rechunk_bsf.c */; };
+		BADF2D962A79145F0030D66C /* prores_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1EC82A78E20D0030D66C /* prores_metadata_bsf.c */; };
+		BADF2D972A79146D0030D66C /* setts_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1D762A78E20D0030D66C /* setts_bsf.c */; };
+		BADF2D982A79147D0030D66C /* trace_headers_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FEE2A78E20E0030D66C /* trace_headers_bsf.c */; };
+		BADF2D992A7914990030D66C /* truehd_core_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23562A78E2100030D66C /* truehd_core_bsf.c */; };
+		BADF2D9A2A7914AA0030D66C /* mlp_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F642A78E20E0030D66C /* mlp_parse.c */; };
+		BADF2D9B2A7914AF0030D66C /* mlp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E2E2A78E20D0030D66C /* mlp.c */; };
+		BADF2D9C2A7914BD0030D66C /* vp9_metadata_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DBB2A78E20D0030D66C /* vp9_metadata_bsf.c */; };
+		BADF2D9D2A7914CC0030D66C /* vp9_raw_reorder_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25F32A78E2130030D66C /* vp9_raw_reorder_bsf.c */; };
+		BADF2D9E2A7914E20030D66C /* vp9_superframe_split_bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24D42A78E2110030D66C /* vp9_superframe_split_bsf.c */; };
+		BADF2D9F2A7915070030D66C /* h263dec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E4B2A78E20D0030D66C /* h263dec.c */; };
+		BADF2DA02A79150D0030D66C /* h263.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25F92A78E2130030D66C /* h263.c */; };
+		BADF2DA12A79151C0030D66C /* ituh263dec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1D9B2A78E20D0030D66C /* ituh263dec.c */; };
+		BADF2DA22A79152A0030D66C /* mpeg4video.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF238A2A78E2100030D66C /* mpeg4video.c */; };
+		BADF2DA32A7915300030D66C /* mpeg4videodec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20832A78E20E0030D66C /* mpeg4videodec.c */; };
+		BADF2DA42A79153B0030D66C /* h263data.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20AE2A78E20E0030D66C /* h263data.c */; };
+		BADF2DA52A79154D0030D66C /* h264dec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20792A78E20E0030D66C /* h264dec.c */; };
+		BADF2DA62A7915550030D66C /* h264_cabac.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF238B2A78E2100030D66C /* h264_cabac.c */; };
+		BADF2DA72A79155A0030D66C /* h264_cavlc.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E2D2A78E20D0030D66C /* h264_cavlc.c */; };
+		BADF2DA82A7915650030D66C /* h264_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F222A78E20E0030D66C /* h264_direct.c */; };
+		BADF2DA92A79156D0030D66C /* h264_loopfilter.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FC12A78E20E0030D66C /* h264_loopfilter.c */; };
+		BADF2DAA2A7915780030D66C /* h264_mb.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF21982A78E20F0030D66C /* h264_mb.c */; };
+		BADF2DAB2A7915800030D66C /* h264_picture.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DEC2A78E20D0030D66C /* h264_picture.c */; };
+		BADF2DAC2A79158A0030D66C /* h264_refs.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20C62A78E20E0030D66C /* h264_refs.c */; };
+		BADF2DAD2A7915910030D66C /* h264_sei.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E5F2A78E20D0030D66C /* h264_sei.c */; };
+		BADF2DAE2A79159A0030D66C /* h264_slice.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20DF2A78E20F0030D66C /* h264_slice.c */; };
+		BADF2DAF2A7915A40030D66C /* h264data.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DB92A78E20D0030D66C /* h264data.c */; };
+		BADF2DB02A7915BE0030D66C /* hevcdec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23502A78E2100030D66C /* hevcdec.c */; };
+		BADF2DB12A7915C50030D66C /* hevc_mvs.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E6A2A78E20D0030D66C /* hevc_mvs.c */; };
+		BADF2DB22A7915CD0030D66C /* hevc_cabac.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1EFE2A78E20D0030D66C /* hevc_cabac.c */; };
+		BADF2DB32A7915D50030D66C /* hevc_refs.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24CB2A78E2110030D66C /* hevc_refs.c */; };
+		BADF2DB42A7915DF0030D66C /* hevcpred.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20732A78E20E0030D66C /* hevcpred.c */; };
+		BADF2DB52A7915E70030D66C /* hevcdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DA62A78E20D0030D66C /* hevcdsp.c */; };
+		BADF2DB62A7915EE0030D66C /* hevc_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25F82A78E2130030D66C /* hevc_filter.c */; };
+		BADF2DB72A7916140030D66C /* xvididct.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF25BA2A78E2120030D66C /* xvididct.c */; };
+		BADF2DB82A7916460030D66C /* aacdec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24092A78E2110030D66C /* aacdec.c */; };
+		BADF2DB92A79164E0030D66C /* aactab.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E962A78E20D0030D66C /* aactab.c */; };
+		BADF2DBA2A7916570030D66C /* aacsbr.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F1C2A78E20E0030D66C /* aacsbr.c */; };
+		BADF2DBB2A7916640030D66C /* aacps_common.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20402A78E20E0030D66C /* aacps_common.c */; };
+		BADF2DBC2A79166B0030D66C /* aacps_float.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1D702A78E20D0030D66C /* aacps_float.c */; };
+		BADF2DBD2A7916800030D66C /* kbdwin.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F0D2A78E20E0030D66C /* kbdwin.c */; };
+		BADF2DBE2A7916940030D66C /* sbrdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF259C2A78E2120030D66C /* sbrdsp.c */; };
+		BADF2DBF2A7916AA0030D66C /* aacpsdsp_float.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23A42A78E2100030D66C /* aacpsdsp_float.c */; };
+		BADF2DC02A7916B60030D66C /* cbrt_data.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F5F2A78E20E0030D66C /* cbrt_data.c */; };
+		BADF2DC12A7916D30030D66C /* flacdec.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1ED22A78E20D0030D66C /* flacdec.c */; };
+		BADF2DC22A7916DE0030D66C /* flacdata.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20372A78E20E0030D66C /* flacdata.c */; };
+		BADF2DC32A7916E40030D66C /* flac.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24E52A78E2110030D66C /* flac.c */; };
+		BADF2DC42A7916FF0030D66C /* mpegaudiodec_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1EC42A78E20D0030D66C /* mpegaudiodec_fixed.c */; };
+		BADF2DC52A79171C0030D66C /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FD22A78E20E0030D66C /* pcm.c */; };
+		BADF2DC62A79176B0030D66C /* videotoolbox.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF240C2A78E2110030D66C /* videotoolbox.c */; };
+		BADF2DC72A7917950030D66C /* aac_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1E272A78E20D0030D66C /* aac_parser.c */; };
+		BADF2DC82A7917A10030D66C /* aac_ac3_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DB42A78E20D0030D66C /* aac_ac3_parser.c */; };
+		BADF2DC92A7917BA0030D66C /* latm_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1DBE2A78E20D0030D66C /* latm_parser.c */; };
+		BADF2DCA2A7917D20030D66C /* ac3tab.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1F372A78E20E0030D66C /* ac3tab.c */; };
+		BADF2DCB2A7917FA0030D66C /* flac_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23842A78E2100030D66C /* flac_parser.c */; };
+		BADF2DCC2A79181E0030D66C /* h263_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF23582A78E2100030D66C /* h263_parser.c */; };
+		BADF2DCD2A79182D0030D66C /* h264_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF24C52A78E2110030D66C /* h264_parser.c */; };
+		BADF2DCE2A7918430030D66C /* hevc_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FC92A78E20E0030D66C /* hevc_parser.c */; };
+		BADF2DCF2A79185F0030D66C /* mpeg4video_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF1FCF2A78E20E0030D66C /* mpeg4video_parser.c */; };
+		BADF2DD02A7918B80030D66C /* mpegaudio_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF20FE2A78E20F0030D66C /* mpegaudio_parser.c */; };
+		BADF2DD12A7919770030D66C /* fmtconvert_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF251C2A78E2120030D66C /* fmtconvert_neon.S */; };
+		BADF2DD22A7919770030D66C /* vp9mc_aarch64.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF251E2A78E2120030D66C /* vp9mc_aarch64.S */; };
+		BADF2DD32A7919770030D66C /* h264qpel_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF251F2A78E2120030D66C /* h264qpel_neon.S */; };
+		BADF2DD42A7919770030D66C /* neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25202A78E2120030D66C /* neon.S */; };
+		BADF2DD52A7919770030D66C /* fft_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25212A78E2120030D66C /* fft_neon.S */; };
+		BADF2DD62A7919770030D66C /* pixblockdsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25222A78E2120030D66C /* pixblockdsp_neon.S */; };
+		BADF2DD72A7919770030D66C /* vp9mc_16bpp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25242A78E2120030D66C /* vp9mc_16bpp_neon.S */; };
+		BADF2DD82A7919770030D66C /* vp8dsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25252A78E2120030D66C /* vp8dsp_neon.S */; };
+		BADF2DD92A7919770030D66C /* mpegaudiodsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25262A78E2120030D66C /* mpegaudiodsp_neon.S */; };
+		BADF2DDA2A7919770030D66C /* hpeldsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25282A78E2120030D66C /* hpeldsp_neon.S */; };
+		BADF2DDB2A7919770030D66C /* hevcdsp_sao_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25292A78E2120030D66C /* hevcdsp_sao_neon.S */; };
+		BADF2DDC2A7919770030D66C /* vorbisdsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF252A2A78E2120030D66C /* vorbisdsp_neon.S */; };
+		BADF2DDD2A7919770030D66C /* vp9lpf_16bpp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25302A78E2120030D66C /* vp9lpf_16bpp_neon.S */; };
+		BADF2DDE2A7919770030D66C /* simple_idct_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25312A78E2120030D66C /* simple_idct_neon.S */; };
+		BADF2DDF2A7919770030D66C /* sbrdsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25322A78E2120030D66C /* sbrdsp_neon.S */; };
+		BADF2DE02A7919770030D66C /* aacpsdsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25372A78E2120030D66C /* aacpsdsp_neon.S */; };
+		BADF2DE12A7919770030D66C /* vp9mc_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF253C2A78E2120030D66C /* vp9mc_neon.S */; };
+		BADF2DE22A7919770030D66C /* h264cmc_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF253D2A78E2120030D66C /* h264cmc_neon.S */; };
+		BADF2DE32A7919770030D66C /* h264idct_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25442A78E2120030D66C /* h264idct_neon.S */; };
+		BADF2DE42A7919770030D66C /* hevcdsp_idct_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25452A78E2120030D66C /* hevcdsp_idct_neon.S */; };
+		BADF2DE52A7919770030D66C /* h264pred_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25462A78E2120030D66C /* h264pred_neon.S */; };
+		BADF2DE62A7919770030D66C /* vp9lpf_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25472A78E2120030D66C /* vp9lpf_neon.S */; };
+		BADF2DE72A7919770030D66C /* vp9itxfm_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25492A78E2120030D66C /* vp9itxfm_neon.S */; };
+		BADF2DE82A7919770030D66C /* h264dsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF254A2A78E2120030D66C /* h264dsp_neon.S */; };
+		BADF2DE92A7919770030D66C /* opusdsp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF254C2A78E2120030D66C /* opusdsp_neon.S */; };
+		BADF2DEA2A7919770030D66C /* vp9itxfm_16bpp_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF254D2A78E2120030D66C /* vp9itxfm_16bpp_neon.S */; };
+		BADF2DEB2A7919770030D66C /* mdct_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25532A78E2120030D66C /* mdct_neon.S */; };
+		BADF2DEC2A7919770030D66C /* synth_filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF25562A78E2120030D66C /* synth_filter_neon.S */; };
+		BADF2DED2A7919770030D66C /* videodsp.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF255B2A78E2120030D66C /* videodsp.S */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -4344,15 +4512,183 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BADF2DD12A7919770030D66C /* fmtconvert_neon.S in Sources */,
+				BADF2DD22A7919770030D66C /* vp9mc_aarch64.S in Sources */,
+				BADF2DD32A7919770030D66C /* h264qpel_neon.S in Sources */,
+				BADF2DD42A7919770030D66C /* neon.S in Sources */,
+				BADF2DD52A7919770030D66C /* fft_neon.S in Sources */,
+				BADF2DD62A7919770030D66C /* pixblockdsp_neon.S in Sources */,
+				BADF2DD72A7919770030D66C /* vp9mc_16bpp_neon.S in Sources */,
+				BADF2DD82A7919770030D66C /* vp8dsp_neon.S in Sources */,
+				BADF2DD92A7919770030D66C /* mpegaudiodsp_neon.S in Sources */,
+				BADF2DDA2A7919770030D66C /* hpeldsp_neon.S in Sources */,
+				BADF2DDB2A7919770030D66C /* hevcdsp_sao_neon.S in Sources */,
+				BADF2DDC2A7919770030D66C /* vorbisdsp_neon.S in Sources */,
+				BADF2DDD2A7919770030D66C /* vp9lpf_16bpp_neon.S in Sources */,
+				BADF2DDE2A7919770030D66C /* simple_idct_neon.S in Sources */,
+				BADF2DDF2A7919770030D66C /* sbrdsp_neon.S in Sources */,
+				BADF2DE02A7919770030D66C /* aacpsdsp_neon.S in Sources */,
+				BADF2DE12A7919770030D66C /* vp9mc_neon.S in Sources */,
+				BADF2DE22A7919770030D66C /* h264cmc_neon.S in Sources */,
+				BADF2DE32A7919770030D66C /* h264idct_neon.S in Sources */,
+				BADF2DE42A7919770030D66C /* hevcdsp_idct_neon.S in Sources */,
+				BADF2DE52A7919770030D66C /* h264pred_neon.S in Sources */,
+				BADF2DE62A7919770030D66C /* vp9lpf_neon.S in Sources */,
+				BADF2DE72A7919770030D66C /* vp9itxfm_neon.S in Sources */,
+				BADF2DE82A7919770030D66C /* h264dsp_neon.S in Sources */,
+				BADF2DE92A7919770030D66C /* opusdsp_neon.S in Sources */,
+				BADF2DEA2A7919770030D66C /* vp9itxfm_16bpp_neon.S in Sources */,
+				BADF2DEB2A7919770030D66C /* mdct_neon.S in Sources */,
+				BADF2DEC2A7919770030D66C /* synth_filter_neon.S in Sources */,
+				BADF2DED2A7919770030D66C /* videodsp.S in Sources */,
+				BADF2DCF2A79185F0030D66C /* mpeg4video_parser.c in Sources */,
+				BADF2DD02A7918B80030D66C /* mpegaudio_parser.c in Sources */,
+				BADF2DA42A79153B0030D66C /* h263data.c in Sources */,
+				BADF2DA22A79152A0030D66C /* mpeg4video.c in Sources */,
+				BADF2DA12A79151C0030D66C /* ituh263dec.c in Sources */,
+				BADF2DA02A79150D0030D66C /* h263.c in Sources */,
+				BADF2DA32A7915300030D66C /* mpeg4videodec.c in Sources */,
+				BADF2D9F2A7915070030D66C /* h263dec.c in Sources */,
+				BADF2DC32A7916E40030D66C /* flac.c in Sources */,
+				BADF2DCD2A79182D0030D66C /* h264_parser.c in Sources */,
+				BADF2DCB2A7917FA0030D66C /* flac_parser.c in Sources */,
+				BADF2DCE2A7918430030D66C /* hevc_parser.c in Sources */,
+				BADF2D662A7910DB0030D66C /* hevc_data.c in Sources */,
+				BADF2DC22A7916DE0030D66C /* flacdata.c in Sources */,
+				BADF2DCC2A79181E0030D66C /* h263_parser.c in Sources */,
+				BADF2DCA2A7917D20030D66C /* ac3tab.c in Sources */,
+				BADF2DC82A7917A10030D66C /* aac_ac3_parser.c in Sources */,
+				BADF2DC42A7916FF0030D66C /* mpegaudiodec_fixed.c in Sources */,
+				BADF2D472A790EE30030D66C /* mpeg4audio.c in Sources */,
+				BADF2DC62A79176B0030D66C /* videotoolbox.c in Sources */,
+				BADF2DB82A7916460030D66C /* aacdec.c in Sources */,
+				BADF2DC92A7917BA0030D66C /* latm_parser.c in Sources */,
+				BADF2DC72A7917950030D66C /* aac_parser.c in Sources */,
+				BADF2DC12A7916D30030D66C /* flacdec.c in Sources */,
+				BADF2DC52A79171C0030D66C /* pcm.c in Sources */,
+				BADF2DC02A7916B60030D66C /* cbrt_data.c in Sources */,
+				BADF2DBF2A7916AA0030D66C /* aacpsdsp_float.c in Sources */,
+				BADF2DBE2A7916940030D66C /* sbrdsp.c in Sources */,
+				BADF2DBD2A7916800030D66C /* kbdwin.c in Sources */,
+				BADF2DBC2A79166B0030D66C /* aacps_float.c in Sources */,
+				BADF2DBB2A7916640030D66C /* aacps_common.c in Sources */,
+				BADF2DB52A7915E70030D66C /* hevcdsp.c in Sources */,
+				BADF2DBA2A7916570030D66C /* aacsbr.c in Sources */,
+				BADF2DB42A7915DF0030D66C /* hevcpred.c in Sources */,
+				BADF2DB92A79164E0030D66C /* aactab.c in Sources */,
+				BADF2DB72A7916140030D66C /* xvididct.c in Sources */,
+				BADF2DB32A7915D50030D66C /* hevc_refs.c in Sources */,
+				BADF2DB12A7915C50030D66C /* hevc_mvs.c in Sources */,
+				BADF2DAE2A79159A0030D66C /* h264_slice.c in Sources */,
+				BADF2DB22A7915CD0030D66C /* hevc_cabac.c in Sources */,
+				BADF2DAF2A7915A40030D66C /* h264data.c in Sources */,
+				BADF2DB02A7915BE0030D66C /* hevcdec.c in Sources */,
+				BADF2DB62A7915EE0030D66C /* hevc_filter.c in Sources */,
+				BADF2DAC2A79158A0030D66C /* h264_refs.c in Sources */,
+				BADF2DAB2A7915800030D66C /* h264_picture.c in Sources */,
+				BADF2DAD2A7915910030D66C /* h264_sei.c in Sources */,
+				BADF2DA92A79156D0030D66C /* h264_loopfilter.c in Sources */,
+				BADF2DAA2A7915780030D66C /* h264_mb.c in Sources */,
+				BADF2DA72A79155A0030D66C /* h264_cavlc.c in Sources */,
+				BADF2DA82A7915650030D66C /* h264_direct.c in Sources */,
+				BADF2DA62A7915550030D66C /* h264_cabac.c in Sources */,
+				BADF2DA52A79154D0030D66C /* h264dec.c in Sources */,
+				BADF2D9A2A7914AA0030D66C /* mlp_parse.c in Sources */,
+				BADF2D9E2A7914E20030D66C /* vp9_superframe_split_bsf.c in Sources */,
+				BADF2D982A79147D0030D66C /* trace_headers_bsf.c in Sources */,
+				BADF2D992A7914990030D66C /* truehd_core_bsf.c in Sources */,
+				BADF2D9D2A7914CC0030D66C /* vp9_raw_reorder_bsf.c in Sources */,
+				BADF2D962A79145F0030D66C /* prores_metadata_bsf.c in Sources */,
+				BADF2D9B2A7914AF0030D66C /* mlp.c in Sources */,
+				BADF2D9C2A7914BD0030D66C /* vp9_metadata_bsf.c in Sources */,
+				BADF2D972A79146D0030D66C /* setts_bsf.c in Sources */,
+				BADF2D942A7914320030D66C /* opus_metadata_bsf.c in Sources */,
+				BADF2D952A79144B0030D66C /* pcm_rechunk_bsf.c in Sources */,
+				BADF2D912A7913F30030D66C /* h265_profile_level.c in Sources */,
+				BADF2D922A79140F0030D66C /* mpeg2_metadata_bsf.c in Sources */,
+				BADF2D932A79141E0030D66C /* null_bsf.c in Sources */,
+				BADF2D902A7913E80030D66C /* h265_metadata_bsf.c in Sources */,
+				BADF2D8E2A7913C00030D66C /* h264_redundant_pps_bsf.c in Sources */,
+				BADF2D8F2A7913D30030D66C /* hapqa_extract_bsf.c in Sources */,
+				BADF2D8D2A7913AF0030D66C /* h264_mp4toannexb_bsf.c in Sources */,
+				BADF2D882A7913470030D66C /* extract_extradata_bsf.c in Sources */,
+				BADF2D892A7913540030D66C /* av1_parse.c in Sources */,
+				BADF2D8C2A7913960030D66C /* h264_levels.c in Sources */,
+				BADF2D512A790F7F0030D66C /* h2645_parse.c in Sources */,
+				BADF2D842A79130B0030D66C /* av1_frame_merge_bsf.c in Sources */,
+				BADF2D8B2A79138E0030D66C /* h264_metadata_bsf.c in Sources */,
+				BADF2D8A2A7913760030D66C /* filter_units_bsf.c in Sources */,
+				BADF2D872A7913350030D66C /* eac3_core_bsf.c in Sources */,
+				BADF2D832A7912EC0030D66C /* aac_adtstoasc_bsf.c in Sources */,
+				BADF2D852A79130D0030D66C /* av1_frame_split_bsf.c in Sources */,
+				BADF2D862A7913210030D66C /* av1_metadata_bsf.c in Sources */,
+				BADF2D802A7912B20030D66C /* sinewin.c in Sources */,
+				BADF2D822A7912DA0030D66C /* videodsp.c in Sources */,
+				BADF2D7F2A7912980030D66C /* qpeldsp.c in Sources */,
+				BADF2D812A7912C20030D66C /* startcode.c in Sources */,
+				BADF2D7D2A79126C0030D66C /* mpegpicture.c in Sources */,
+				BADF2D7E2A7912800030D66C /* pixblockdsp.c in Sources */,
+				BADF2D7A2A7912480030D66C /* mpegvideo_motion.c in Sources */,
+				BADF2D752A7911DF0030D66C /* mpegaudiodsp_float.c in Sources */,
+				BADF2D772A7912170030D66C /* mpegvideo.c in Sources */,
+				BADF2D792A7912310030D66C /* rl.c in Sources */,
+				BADF2D7C2A7912630030D66C /* mpegvideodata.c in Sources */,
+				BADF2D7B2A7912560030D66C /* mpegutils.c in Sources */,
+				BADF2D712A7911B40030D66C /* mpegaudiodec_common.c in Sources */,
+				BADF2D782A7912250030D66C /* mpegvideodsp.c in Sources */,
+				BADF2D6D2A79115E0030D66C /* mpegaudiodata.c in Sources */,
+				BADF2D722A7911CE0030D66C /* mpegaudiodsp.c in Sources */,
+				BADF2D742A7911DC0030D66C /* mpegaudiodsp_fixed.c in Sources */,
+				BADF2D732A7911D30030D66C /* mpegaudiodsp_data.c in Sources */,
+				BADF2D6C2A7911360030D66C /* mdct15.c in Sources */,
+				BADF2D762A7911F30030D66C /* mpegaudiodecheader.c in Sources */,
+				BADF2D702A79119E0030D66C /* mpegaudio.c in Sources */,
+				BADF2D6B2A79111F0030D66C /* jrevdct.c in Sources */,
+				BADF2D6F2A7911860030D66C /* mpeg_er.c in Sources */,
+				BADF2D622A79109F0030D66C /* h264qpel.c in Sources */,
+				BADF2D692A79110F0030D66C /* idctdsp.c in Sources */,
+				BADF2D6E2A7911770030D66C /* me_cmp.c in Sources */,
+				BADF2D6A2A7911190030D66C /* simple_idct.c in Sources */,
+				BADF2D682A7910F70030D66C /* hpeldsp.c in Sources */,
+				BADF2D5E2A79105E0030D66C /* h264idct.c in Sources */,
+				BADF2D642A7910CD0030D66C /* hevc_ps.c in Sources */,
+				BADF2D672A7910E40030D66C /* dynamic_hdr10_plus.c in Sources */,
+				BADF2D652A7910D40030D66C /* hevc_sei.c in Sources */,
+				BADF2D5D2A7910540030D66C /* h264dsp.c in Sources */,
+				BADF2D632A7910B30030D66C /* hevc_parse.c in Sources */,
+				BADF2D582A790FE70030D66C /* jfdctint.c in Sources */,
+				BADF2D562A790FD80030D66C /* fdctdsp.c in Sources */,
+				BADF2D5F2A79106D0030D66C /* h264_parse.c in Sources */,
+				BADF2D5A2A79101A0030D66C /* golomb.c in Sources */,
+				BADF2D612A79108E0030D66C /* h264pred.c in Sources */,
+				BADF2D502A790F730030D66C /* cbs_sei.c in Sources */,
+				BADF2D5C2A7910410030D66C /* h264chroma.c in Sources */,
+				BADF2D592A7910050030D66C /* flacdsp.c in Sources */,
+				BADF2D602A79107F0030D66C /* h264_ps.c in Sources */,
+				BADF2D552A790FC50030D66C /* faanidct.c in Sources */,
+				BADF2D5B2A79102D0030D66C /* h263dsp.c in Sources */,
+				BADF2D542A790FB70030D66C /* faandct.c in Sources */,
+				BADF2D572A790FE20030D66C /* jfdctfst.c in Sources */,
+				BADF2D4A2A790F160030D66C /* bswapdsp.c in Sources */,
+				BADF2D4E2A790F5A0030D66C /* cbs_av1.c in Sources */,
+				BADF2D532A790FA40030D66C /* cbs_vp9.c in Sources */,
+				BADF2D522A790F960030D66C /* cbs_mpeg2.c in Sources */,
+				BADF2D492A790F030030D66C /* blockdsp.c in Sources */,
 				BADF2D452A790D2B0030D66C /* xiph.c in Sources */,
 				BADF2D442A790D220030D66C /* vorbis_parser.c in Sources */,
+				BADF2D4B2A790F290030D66C /* cabac.c in Sources */,
+				BADF2D462A790ED60030D66C /* adts_header.c in Sources */,
+				BADF2D4F2A790F6B0030D66C /* cbs_h2645.c in Sources */,
 				BADF2D432A790D190030D66C /* utils.c in Sources */,
+				BADF2D4D2A790F4C0030D66C /* cbs_bsf.c in Sources */,
+				BADF2D482A790EF60030D66C /* atsc_a53.c in Sources */,
 				BADF2D3F2A790CF60030D66C /* parsers.c in Sources */,
 				BADF2D3B2A790CD30030D66C /* mediacodec.c in Sources */,
 				BADF2D412A790D060030D66C /* qsv_api.c in Sources */,
 				BADF2D372A790CB10030D66C /* encode.c in Sources */,
 				BADF2D322A790C300030D66C /* codec_par.c in Sources */,
 				BADF2D2E2A790C160030D66C /* bitstream_filter.c in Sources */,
+				BADF2D4C2A790F400030D66C /* cbs.c in Sources */,
 				BADF2D3C2A790CDE0030D66C /* mpeg12framerate.c in Sources */,
 				BADF2D422A790D0F0030D66C /* raw.c in Sources */,
 				BADF2D352A790CA10030D66C /* dirac.c in Sources */,
