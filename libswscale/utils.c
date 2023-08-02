@@ -53,7 +53,7 @@
 #include "libavutil/ppc/cpu.h"
 #include "libavutil/x86/asm.h"
 #include "libavutil/x86/cpu.h"
-
+#include "libavutil/internal.h"
 // We have to implement deprecated functions until they are removed, this is the
 // simplest way to prevent warnings
 #undef attribute_deprecated

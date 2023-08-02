@@ -31,6 +31,7 @@
 #include "libavutil/intreadwrite.h"
 #include "libavutil/mathematics.h"
 #include "libavutil/mem_internal.h"
+#include "libavutil/internal.h"
 #include "libavutil/pixdesc.h"
 #include "config.h"
 #include "rgb2rgb.h"
