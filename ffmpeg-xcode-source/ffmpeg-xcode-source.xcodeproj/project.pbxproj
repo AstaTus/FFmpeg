@@ -478,6 +478,18 @@
 		BADF32DF2A7A04D60030D66C /* version.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF2E6E2A7922260030D66C /* version.h */; };
 		BADF32E02A7A056A0030D66C /* isom_tags.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF2F582A7922260030D66C /* isom_tags.c */; };
 		BADF32E12A7A05A70030D66C /* isom.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF2FEB2A7922260030D66C /* isom.c */; };
+		BADF33542A7A077E0030D66C /* audioconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF32F82A7A071D0030D66C /* audioconvert.c */; };
+		BADF33552A7A078A0030D66C /* dither.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF330D2A7A071D0030D66C /* dither.c */; };
+		BADF33562A7A07940030D66C /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF33262A7A071D0030D66C /* options.c */; };
+		BADF33572A7A079E0030D66C /* rematrix.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF32F22A7A071D0030D66C /* rematrix.c */; };
+		BADF33582A7A07B00030D66C /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF33022A7A071D0030D66C /* resample.c */; };
+		BADF33592A7A07BC0030D66C /* resample_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF32F32A7A071D0030D66C /* resample_dsp.c */; };
+		BADF335A2A7A07C60030D66C /* swresample.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF33002A7A071D0030D66C /* swresample.c */; };
+		BADF335B2A7A07D20030D66C /* swresample_frame.c in Sources */ = {isa = PBXBuildFile; fileRef = BADF33252A7A071D0030D66C /* swresample_frame.c */; };
+		BADF335C2A7A082D0030D66C /* resample.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF33162A7A071D0030D66C /* resample.S */; };
+		BADF335D2A7A082D0030D66C /* audio_convert_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = BADF33212A7A071D0030D66C /* audio_convert_neon.S */; };
+		BADF335E2A7A08520030D66C /* swresample.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF33242A7A071D0030D66C /* swresample.h */; };
+		BADF335F2A7A085A0030D66C /* version.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BADF32F42A7A071D0030D66C /* version.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -629,6 +641,17 @@
 				BADF32DF2A7A04D60030D66C /* version.h in CopyFiles */,
 				BADF32DD2A7A04C50030D66C /* avformat.h in CopyFiles */,
 				BADF32DE2A7A04CE0030D66C /* avio.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BADF32E42A7A07070030D66C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				BADF335E2A7A08520030D66C /* swresample.h in CopyFiles */,
+				BADF335F2A7A085A0030D66C /* version.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3111,6 +3134,43 @@
 		BADF32D72A7A015D0030D66C /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "../../libs/ios/qplayer-openssl/lib/libcrypto.a"; sourceTree = "<group>"; };
 		BADF32D82A7A015D0030D66C /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "../../libs/ios/qplayer-openssl/lib/libssl.a"; sourceTree = "<group>"; };
 		BADF32DB2A7A02250030D66C /* srt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = srt.a; path = "../../libs/ios/qplayer-srt/lib/srt.a"; sourceTree = "<group>"; };
+		BADF32E62A7A07070030D66C /* libswresample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libswresample.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BADF32F02A7A071D0030D66C /* libswresample.v */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libswresample.v; sourceTree = "<group>"; };
+		BADF32F12A7A071D0030D66C /* resample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resample.h; sourceTree = "<group>"; };
+		BADF32F22A7A071D0030D66C /* rematrix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rematrix.c; sourceTree = "<group>"; };
+		BADF32F32A7A071D0030D66C /* resample_dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample_dsp.c; sourceTree = "<group>"; };
+		BADF32F42A7A071D0030D66C /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		BADF32F52A7A071D0030D66C /* rematrix_template.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rematrix_template.c; sourceTree = "<group>"; };
+		BADF32F62A7A071D0030D66C /* resample_template.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample_template.c; sourceTree = "<group>"; };
+		BADF32F72A7A071D0030D66C /* swresample_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swresample_internal.h; sourceTree = "<group>"; };
+		BADF32F82A7A071D0030D66C /* audioconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audioconvert.c; sourceTree = "<group>"; };
+		BADF32F92A7A071D0030D66C /* swresampleres.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = swresampleres.rc; sourceTree = "<group>"; };
+		BADF32FA2A7A071D0030D66C /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		BADF32FB2A7A071D0030D66C /* log2_tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log2_tab.c; sourceTree = "<group>"; };
+		BADF32FF2A7A071D0030D66C /* dither_template.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dither_template.c; sourceTree = "<group>"; };
+		BADF33002A7A071D0030D66C /* swresample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = swresample.c; sourceTree = "<group>"; };
+		BADF33012A7A071D0030D66C /* noise_shaping_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = noise_shaping_data.c; sourceTree = "<group>"; };
+		BADF33022A7A071D0030D66C /* resample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample.c; sourceTree = "<group>"; };
+		BADF330C2A7A071D0030D66C /* audioconvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audioconvert.h; sourceTree = "<group>"; };
+		BADF330D2A7A071D0030D66C /* dither.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dither.c; sourceTree = "<group>"; };
+		BADF33162A7A071D0030D66C /* resample.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = resample.S; sourceTree = "<group>"; };
+		BADF33172A7A071D0030D66C /* resample.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = resample.o; sourceTree = "<group>"; };
+		BADF33182A7A071D0030D66C /* audio_convert_init.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = audio_convert_init.o; sourceTree = "<group>"; };
+		BADF33192A7A071D0030D66C /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		BADF331A2A7A071D0030D66C /* neontest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = neontest.c; sourceTree = "<group>"; };
+		BADF331B2A7A071D0030D66C /* audio_convert_neon.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; path = audio_convert_neon.d; sourceTree = "<group>"; };
+		BADF331C2A7A071D0030D66C /* resample_init.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = resample_init.o; sourceTree = "<group>"; };
+		BADF331D2A7A071D0030D66C /* audio_convert_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = audio_convert_init.c; sourceTree = "<group>"; };
+		BADF331E2A7A071D0030D66C /* audio_convert_init.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; path = audio_convert_init.d; sourceTree = "<group>"; };
+		BADF331F2A7A071D0030D66C /* resample.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; path = resample.d; sourceTree = "<group>"; };
+		BADF33202A7A071D0030D66C /* audio_convert_neon.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = audio_convert_neon.o; sourceTree = "<group>"; };
+		BADF33212A7A071D0030D66C /* audio_convert_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = audio_convert_neon.S; sourceTree = "<group>"; };
+		BADF33222A7A071D0030D66C /* resample_init.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample_init.c; sourceTree = "<group>"; };
+		BADF33232A7A071D0030D66C /* resample_init.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; path = resample_init.d; sourceTree = "<group>"; };
+		BADF33242A7A071D0030D66C /* swresample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swresample.h; sourceTree = "<group>"; };
+		BADF33252A7A071D0030D66C /* swresample_frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = swresample_frame.c; sourceTree = "<group>"; };
+		BADF33262A7A071D0030D66C /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = "<group>"; };
+		BADF33272A7A071D0030D66C /* soxr_resample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = soxr_resample.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3145,12 +3205,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BADF32E32A7A07070030D66C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		BADF1AD02A78D9EC0030D66C = {
 			isa = PBXGroup;
 			children = (
+				BADF32EF2A7A071D0030D66C /* libswresample */,
 				BADF2E2C2A7922260030D66C /* libavformat */,
 				BADF1D6F2A78E20D0030D66C /* libavcodec */,
 				BADF1D092A78DB4F0030D66C /* config.h */,
@@ -3167,6 +3235,7 @@
 				BADF1AE92A78DA4B0030D66C /* libavutil.a */,
 				BADF2D1D2A790B400030D66C /* libavcodec.a */,
 				BADF2E232A7921F30030D66C /* libavformat.a */,
+				BADF32E62A7A07070030D66C /* libswresample.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5697,6 +5766,58 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BADF32EF2A7A071D0030D66C /* libswresample */ = {
+			isa = PBXGroup;
+			children = (
+				BADF32F02A7A071D0030D66C /* libswresample.v */,
+				BADF32F12A7A071D0030D66C /* resample.h */,
+				BADF32F22A7A071D0030D66C /* rematrix.c */,
+				BADF32F32A7A071D0030D66C /* resample_dsp.c */,
+				BADF32F42A7A071D0030D66C /* version.h */,
+				BADF32F52A7A071D0030D66C /* rematrix_template.c */,
+				BADF32F62A7A071D0030D66C /* resample_template.c */,
+				BADF32F72A7A071D0030D66C /* swresample_internal.h */,
+				BADF32F82A7A071D0030D66C /* audioconvert.c */,
+				BADF32F92A7A071D0030D66C /* swresampleres.rc */,
+				BADF32FA2A7A071D0030D66C /* Makefile */,
+				BADF32FB2A7A071D0030D66C /* log2_tab.c */,
+				BADF32FF2A7A071D0030D66C /* dither_template.c */,
+				BADF33002A7A071D0030D66C /* swresample.c */,
+				BADF33012A7A071D0030D66C /* noise_shaping_data.c */,
+				BADF33022A7A071D0030D66C /* resample.c */,
+				BADF330C2A7A071D0030D66C /* audioconvert.h */,
+				BADF330D2A7A071D0030D66C /* dither.c */,
+				BADF33152A7A071D0030D66C /* aarch64 */,
+				BADF33242A7A071D0030D66C /* swresample.h */,
+				BADF33252A7A071D0030D66C /* swresample_frame.c */,
+				BADF33262A7A071D0030D66C /* options.c */,
+				BADF33272A7A071D0030D66C /* soxr_resample.c */,
+			);
+			name = libswresample;
+			path = ../libswresample;
+			sourceTree = "<group>";
+		};
+		BADF33152A7A071D0030D66C /* aarch64 */ = {
+			isa = PBXGroup;
+			children = (
+				BADF33162A7A071D0030D66C /* resample.S */,
+				BADF33172A7A071D0030D66C /* resample.o */,
+				BADF33182A7A071D0030D66C /* audio_convert_init.o */,
+				BADF33192A7A071D0030D66C /* Makefile */,
+				BADF331A2A7A071D0030D66C /* neontest.c */,
+				BADF331B2A7A071D0030D66C /* audio_convert_neon.d */,
+				BADF331C2A7A071D0030D66C /* resample_init.o */,
+				BADF331D2A7A071D0030D66C /* audio_convert_init.c */,
+				BADF331E2A7A071D0030D66C /* audio_convert_init.d */,
+				BADF331F2A7A071D0030D66C /* resample.d */,
+				BADF33202A7A071D0030D66C /* audio_convert_neon.o */,
+				BADF33212A7A071D0030D66C /* audio_convert_neon.S */,
+				BADF33222A7A071D0030D66C /* resample_init.c */,
+				BADF33232A7A071D0030D66C /* resample_init.d */,
+			);
+			path = aarch64;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -5768,6 +5889,23 @@
 			productReference = BADF2E232A7921F30030D66C /* libavformat.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		BADF32E52A7A07070030D66C /* swresample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BADF32EE2A7A07070030D66C /* Build configuration list for PBXNativeTarget "swresample" */;
+			buildPhases = (
+				BADF32E22A7A07070030D66C /* Sources */,
+				BADF32E32A7A07070030D66C /* Frameworks */,
+				BADF32E42A7A07070030D66C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = swresample;
+			productName = swresample;
+			productReference = BADF32E62A7A07070030D66C /* libswresample.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -5789,6 +5927,9 @@
 					BADF2E222A7921F30030D66C = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
+					BADF32E52A7A07070030D66C = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
 				};
 			};
 			buildConfigurationList = BADF1AD42A78D9EC0030D66C /* Build configuration list for PBXProject "ffmpeg-xcode-source" */;
@@ -5808,6 +5949,7 @@
 				BADF1AE82A78DA4B0030D66C /* avutil */,
 				BADF2D1C2A790B400030D66C /* avcodec */,
 				BADF2E222A7921F30030D66C /* avformat */,
+				BADF32E52A7A07070030D66C /* swresample */,
 			);
 		};
 /* End PBXProject section */
@@ -6194,6 +6336,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BADF32E22A7A07070030D66C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BADF335C2A7A082D0030D66C /* resample.S in Sources */,
+				BADF335D2A7A082D0030D66C /* audio_convert_neon.S in Sources */,
+				BADF33582A7A07B00030D66C /* resample.c in Sources */,
+				BADF335B2A7A07D20030D66C /* swresample_frame.c in Sources */,
+				BADF33572A7A079E0030D66C /* rematrix.c in Sources */,
+				BADF33592A7A07BC0030D66C /* resample_dsp.c in Sources */,
+				BADF33562A7A07940030D66C /* options.c in Sources */,
+				BADF335A2A7A07C60030D66C /* swresample.c in Sources */,
+				BADF33552A7A078A0030D66C /* dither.c in Sources */,
+				BADF33542A7A077E0030D66C /* audioconvert.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -6453,6 +6612,42 @@
 			};
 			name = Release;
 		};
+		BADF32EC2A7A07070030D66C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W2TP34G2MM;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../libswresample\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BADF32ED2A7A07070030D66C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W2TP34G2MM;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../libswresample\"",
+					"\"$(SRCROOT)\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -6497,6 +6692,15 @@
 			buildConfigurations = (
 				BADF2E292A7921F30030D66C /* Debug */,
 				BADF2E2A2A7921F30030D66C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BADF32EE2A7A07070030D66C /* Build configuration list for PBXNativeTarget "swresample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BADF32EC2A7A07070030D66C /* Debug */,
+				BADF32ED2A7A07070030D66C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
