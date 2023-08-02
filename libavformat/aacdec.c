@@ -22,6 +22,7 @@
 
 #include "libavutil/avassert.h"
 #include "libavutil/intreadwrite.h"
+#include "libavutil/internal.h"
 #include "avformat.h"
 #include "avio_internal.h"
 #include "internal.h"

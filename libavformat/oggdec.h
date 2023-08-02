@@ -27,6 +27,7 @@
 
 #include "avformat.h"
 #include "metadata.h"
+#include "libavutil/internal.h"
 
 struct ogg_codec {
     const int8_t *magic;

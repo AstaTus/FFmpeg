@@ -35,6 +35,7 @@
 #include "libavutil/spherical.h"
 #include "libavutil/stereo3d.h"
 #include "libavutil/timecode.h"
+#include "libavutil/internal.h"
 
 #include "avformat.h"
 

@@ -20,6 +20,7 @@
  */
 
 #include "libavutil/avstring.h"
+#include "libavutil/internal.h"
 #include "avformat.h"
 #include "internal.h"
 #include "pcm.h"

@@ -22,7 +22,7 @@
 #include "libavutil/avassert.h"
 #include "libavutil/parseutils.h"
 #include "libavutil/opt.h"
-#include "libavutil/time.h"
+#include "libavutil/fftime.h"
 #include "libavutil/avprotocol_event_dispatcher.h"
 
 #include "internal.h"

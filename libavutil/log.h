@@ -397,5 +397,7 @@ int av_log_get_flags(void);
 /**
  * @}
  */
+void avpriv_request_sample(void *avc, const char *msg, ...);
 
+void avpriv_report_missing_feature(void *avc, const char *msg, ...);
 #endif /* AVUTIL_LOG_H */

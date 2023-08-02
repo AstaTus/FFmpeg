@@ -29,7 +29,8 @@
 #include "libavutil/avstring.h"
 #include "libavutil/bprint.h"
 #include "libavutil/opt.h"
-#include "libavutil/time.h"
+#include "libavutil/fftime.h"
+#include "libavutil/internal.h"
 #include "libavutil/parseutils.h"
 #include "libavutil/avprotocol_event_dispatcher.h"
 

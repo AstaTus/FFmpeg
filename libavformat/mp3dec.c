@@ -25,6 +25,7 @@
 #include "libavutil/crc.h"
 #include "libavutil/dict.h"
 #include "libavutil/mathematics.h"
+#include "libavutil/internal.h"
 #include "avformat.h"
 #include "internal.h"
 #include "avio_internal.h"

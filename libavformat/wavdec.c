@@ -33,6 +33,7 @@
 #include "libavutil/intreadwrite.h"
 #include "libavutil/log.h"
 #include "libavutil/mathematics.h"
+#include "libavutil/internal.h"
 #include "libavutil/opt.h"
 #include "avformat.h"
 #include "avio.h"
