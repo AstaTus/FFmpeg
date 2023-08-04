@@ -919,7 +919,6 @@
 		BADF1C522A78DA770030D66C /* threadmessage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = threadmessage.c; sourceTree = "<group>"; };
 		BADF1C532A78DA770030D66C /* avprotocol_event_dispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avprotocol_event_dispatcher.h; sourceTree = "<group>"; };
 		BADF1C542A78DA770030D66C /* tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tree.c; sourceTree = "<group>"; };
-		BADF1D092A78DB4F0030D66C /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		BADF1D702A78E20D0030D66C /* aacps_float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aacps_float.c; sourceTree = "<group>"; };
 		BADF1D712A78E20D0030D66C /* librav1e.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = librav1e.c; sourceTree = "<group>"; };
 		BADF1D722A78E20D0030D66C /* g729postfilter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g729postfilter.c; sourceTree = "<group>"; };
@@ -3250,6 +3249,7 @@
 		BADF33C62A7A3CD20030D66C /* swscaleres.rc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = swscaleres.rc; sourceTree = "<group>"; };
 		BADF33C72A7A3CD20030D66C /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
 		BADF33C82A7A3CD20030D66C /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = "<group>"; };
+		BADF37E02A7D160B0030D66C /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3304,11 +3304,11 @@
 		BADF1AD02A78D9EC0030D66C = {
 			isa = PBXGroup;
 			children = (
+				BADF37E02A7D160B0030D66C /* config.h */,
 				BADF33712A7A3CD10030D66C /* libswscale */,
 				BADF32EF2A7A071D0030D66C /* libswresample */,
 				BADF2E2C2A7922260030D66C /* libavformat */,
 				BADF1D6F2A78E20D0030D66C /* libavcodec */,
-				BADF1D092A78DB4F0030D66C /* config.h */,
 				BADF1AF22A78DA760030D66C /* libavutil */,
 				BADF1ADA2A78D9EC0030D66C /* Products */,
 				BADF32D62A7A015D0030D66C /* Frameworks */,
@@ -5995,6 +5995,7 @@
 				BADF1AE52A78DA4B0030D66C /* Sources */,
 				BADF1AE62A78DA4B0030D66C /* Frameworks */,
 				BADF1AE72A78DA4B0030D66C /* CopyFiles */,
+				BADF37DF2A7D15C30030D66C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -6012,6 +6013,7 @@
 				BADF2D192A790B400030D66C /* Sources */,
 				BADF2D1A2A790B400030D66C /* Frameworks */,
 				BADF2D1B2A790B400030D66C /* CopyFiles */,
+				BADF37E12A7D18990030D66C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -6029,6 +6031,7 @@
 				BADF2E1F2A7921F30030D66C /* Sources */,
 				BADF2E202A7921F30030D66C /* Frameworks */,
 				BADF2E212A7921F30030D66C /* Copy Files */,
+				BADF37E32A7D18AA0030D66C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -6046,6 +6049,7 @@
 				BADF32E22A7A07070030D66C /* Sources */,
 				BADF32E32A7A07070030D66C /* Frameworks */,
 				BADF32E42A7A07070030D66C /* CopyFiles */,
+				BADF37E42A7D18B60030D66C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -6063,6 +6067,7 @@
 				BADF33642A7A3CB60030D66C /* Sources */,
 				BADF33652A7A3CB60030D66C /* Frameworks */,
 				BADF33662A7A3CB60030D66C /* CopyFiles */,
+				BADF37E52A7D18CA0030D66C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -6124,6 +6129,94 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BADF37DF2A7D15C30030D66C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh avutil_build.sh\n";
+		};
+		BADF37E12A7D18990030D66C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh avcodec_build.sh\n";
+		};
+		BADF37E32A7D18AA0030D66C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh avformat_build.sh\n";
+		};
+		BADF37E42A7D18B60030D66C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh swresample_build.sh\n";
+		};
+		BADF37E52A7D18CA0030D66C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsh swscale_build.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BADF1AD52A78D9EC0030D66C /* Sources */ = {
