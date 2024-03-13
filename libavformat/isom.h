@@ -328,6 +328,7 @@ typedef struct MOVContext {
     } *avif_info;
     int avif_info_size;
     int interleaved_read;
+    char *qn_decryption_key;
 } MOVContext;
 
 int ff_mp4_read_descr_len(AVIOContext *pb);
