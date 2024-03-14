@@ -58,6 +58,7 @@
 #define AVERROR_FILTER_NOT_FOUND   FFERRTAG(0xF8,'F','I','L') ///< Filter not found
 #define AVERROR_INVALIDDATA        FFERRTAG( 'I','N','D','A') ///< Invalid data found when processing input
 #define AVERROR_QNCOMKEYERROR      FFERRTAG( 'Q','N','C','K') ///< Invalid QN comkey error
+#define AVERROR_QNFILEKEYERROR     FFERRTAG( 'Q','N','F','K') ///< Invalid QN filekey error
 #define AVERROR_MUXER_NOT_FOUND    FFERRTAG(0xF8,'M','U','X') ///< Muxer not found
 #define AVERROR_OPTION_NOT_FOUND   FFERRTAG(0xF8,'O','P','T') ///< Option not found
 #define AVERROR_PATCHWELCOME       FFERRTAG( 'P','A','W','E') ///< Not yet implemented in FFmpeg, patches welcome
