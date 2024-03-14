@@ -74,7 +74,15 @@ typedef struct MOVParseTableEntry {
     int (*parse)(MOVContext *ctx, AVIOContext *pb, MOVAtom atom);
 } MOVParseTableEntry;
 
+typedef struct QNMp4DecryptionKey {
+    char mComKey[16];
+    char mFileKey[16];
+    int mComKeySize;
+    int mFileKeySize;
+}QNMp4DecryptionKey;
+
 static int mov_read_default(MOVContext *c, AVIOContext *pb, MOVAtom atom);
+static int mov_read_default_qn(MOVContext *c, AVIOContext *pb, MOVAtom atom, QNMp4DecryptionKey *mQNMp4Key);
 static int mov_read_mfra(MOVContext *c, AVIOContext *f);
 static int64_t add_ctts_entry(MOVStts** ctts_data, unsigned int* ctts_count, unsigned int* allocated_size,
                               int count, int duration);
@@ -6987,45 +6995,178 @@ static const MOVParseTableEntry mov_default_parse_table[] = {
 { 0, NULL }
 };
 
-typedef struct QNMp4DecryptionKey {
-    char mComKey[16];
-    char mFileKey[16];
-    int mComKeySize;
-    int mFileKeySize;
-}QNMp4DecryptionKey;
+static int mov_decryption_cpky(unsigned char *cpky,int box_size,QNMp4DecryptionKey *mQNMp4Key){
+    memset(mQNMp4Key->mComKey, 0, sizeof(mQNMp4Key->mComKey));
+    int nKeySize = box_size - 8;
+    for (int i = 0; i < nKeySize; i++)
+        mQNMp4Key->mComKey[i] = cpky[i] - (nKeySize - i);
+    mQNMp4Key->mComKeySize = nKeySize;
+    return 0;
+}
+static int mov_decryption_flky(unsigned char *flky,int box_size,QNMp4DecryptionKey *mQNMp4Key){
+    memset(mQNMp4Key->mFileKey, 0, sizeof(mQNMp4Key->mFileKey));
+    int nKeySize = box_size - 8;
+    for (int i = 0; i < nKeySize; i++)
+        mQNMp4Key->mFileKey[i] = flky[i];
+    mQNMp4Key->mFileKeySize = nKeySize;
+    return 0;
+}
+static QNMp4DecryptionKey * create_qn_decryption_key(void){
+    QNMp4DecryptionKey *mQNMp4Key = malloc(sizeof(QNMp4DecryptionKey));
+    memset(mQNMp4Key->mComKey, 0, sizeof(mQNMp4Key->mComKey));
+    memset(mQNMp4Key->mFileKey, 0, sizeof(mQNMp4Key->mFileKey));
+    mQNMp4Key->mComKeySize = 0;
+    mQNMp4Key->mFileKeySize = 0;
+    return mQNMp4Key;
+}
+static int mov_read_default_qn(MOVContext *c, AVIOContext *pb, MOVAtom atom, QNMp4DecryptionKey *mQNMp4Key){
+    int64_t total_size = 0;
+    MOVAtom a;
+    int i;
 
-static QNMp4DecryptionKey mQNMp4Key;
-static int mov_decryption_cpky(unsigned char *cpky,int box_size){
-    memset(mQNMp4Key.mComKey, 0, sizeof(mQNMp4Key.mComKey));
-    int nKeySize = box_size - 8;
-    for (int i = 0; i < nKeySize; i++)
-        mQNMp4Key.mComKey[i] = cpky[i] - (nKeySize - i);
-    mQNMp4Key.mComKeySize = nKeySize;
+    if (c->atom_depth > 10) {
+        av_log(c->fc, AV_LOG_ERROR, "Atoms too deeply nested\n");
+        return AVERROR_INVALIDDATA;
+    }
+    c->atom_depth ++;
+
+    if (atom.size < 0)
+        atom.size = INT64_MAX;
+    while (total_size <= atom.size - 8 && !avio_feof(pb)) {
+        int (*parse)(MOVContext*, AVIOContext*, MOVAtom) = NULL;
+        a.size = atom.size;
+        a.type=0;
+        if (atom.size >= 8) {
+            a.size = avio_rb32(pb);
+            a.type = avio_rl32(pb);
+            if (a.type == MKTAG('c', 'p', 'k', 'y')) {
+                mov_decryption_cpky(pb->buf_ptr, (int)a.size, mQNMp4Key);
+            }
+            if (a.type == MKTAG('f', 'l', 'k', 'y')) {
+                mov_decryption_flky(pb->buf_ptr, (int)a.size, mQNMp4Key);
+            }
+            if (((a.type == MKTAG('f','r','e','e') && c->moov_retry) ||
+                  a.type == MKTAG('h','o','o','v')) &&
+                a.size >= 8 &&
+                c->fc->strict_std_compliance < FF_COMPLIANCE_STRICT) {
+                uint32_t type;
+                avio_skip(pb, 4);
+                type = avio_rl32(pb);
+                if (avio_feof(pb))
+                    break;
+                avio_seek(pb, -8, SEEK_CUR);
+                if (type == MKTAG('m','v','h','d') ||
+                    type == MKTAG('c','m','o','v')) {
+                    av_log(c->fc, AV_LOG_ERROR, "Detected moov in a free or hoov atom.\n");
+                    a.type = MKTAG('m','o','o','v');
+                }
+            }
+            if (atom.type != MKTAG('r','o','o','t') &&
+                atom.type != MKTAG('m','o','o','v')) {
+                if (a.type == MKTAG('t','r','a','k') ||
+                    a.type == MKTAG('m','d','a','t')) {
+                    av_log(c->fc, AV_LOG_ERROR, "Broken file, trak/mdat not at top-level\n");
+                    avio_skip(pb, -8);
+                    c->atom_depth --;
+                    return 0;
+                }
+            }
+            total_size += 8;
+            if (a.size == 1 && total_size + 8 <= atom.size) { /* 64 bit extended size */
+                a.size = avio_rb64(pb) - 8;
+                total_size += 8;
+            }
+        }
+        av_log(c->fc, AV_LOG_TRACE, "type:'%s' parent:'%s' sz: %"PRId64" %"PRId64" %"PRId64"\n",
+               av_fourcc2str(a.type), av_fourcc2str(atom.type), a.size, total_size, atom.size);
+        if (a.size == 0) {
+            a.size = atom.size - total_size + 8;
+        }
+        a.size -= 8;
+        if (a.size < 0)
+            break;
+        a.size = FFMIN(a.size, atom.size - total_size);
+
+        for (i = 0; mov_default_parse_table[i].type; i++)
+            if (mov_default_parse_table[i].type == a.type) {
+                parse = mov_default_parse_table[i].parse;
+                break;
+            }
+
+        // container is user data
+        if (!parse && (atom.type == MKTAG('u','d','t','a') ||
+                       atom.type == MKTAG('i','l','s','t')))
+            parse = mov_read_udta_string;
+
+        // Supports parsing the QuickTime Metadata Keys.
+        // https://developer.apple.com/library/mac/documentation/QuickTime/QTFF/Metadata/Metadata.html
+        if (!parse && c->found_hdlr_mdta &&
+            atom.type == MKTAG('m','e','t','a') &&
+            a.type == MKTAG('k','e','y','s') &&
+            c->meta_keys_count == 0) {
+            parse = mov_read_keys;
+        }
+
+        if (!parse) { /* skip leaf atoms data */
+            avio_skip(pb, a.size);
+        } else {
+            int64_t start_pos = avio_tell(pb);
+            int64_t left;
+            int err = parse(c, pb, a);
+            if (err < 0) {
+                c->atom_depth --;
+                return err;
+            }
+            if (c->found_moov && c->found_mdat && a.size <= INT64_MAX - start_pos &&
+                ((!(pb->seekable & AVIO_SEEKABLE_NORMAL) || c->fc->flags & AVFMT_FLAG_IGNIDX || c->frag_index.complete) ||
+                 start_pos + a.size == avio_size(pb))) {
+                if (!(pb->seekable & AVIO_SEEKABLE_NORMAL) || c->fc->flags & AVFMT_FLAG_IGNIDX || c->frag_index.complete)
+                    c->next_root_atom = start_pos + a.size;
+                c->atom_depth --;
+                return 0;
+            }
+            left = a.size - avio_tell(pb) + start_pos;
+            if (left > 0) /* skip garbage at atom end */
+                avio_skip(pb, left);
+            else if (left < 0) {
+                av_log(c->fc, AV_LOG_WARNING,
+                       "overread end of atom '%s' by %"PRId64" bytes\n",
+                       av_fourcc2str(a.type), -left);
+                avio_seek(pb, left, SEEK_CUR);
+            }
+        }
+
+        total_size += a.size;
+    }
+
+    if (total_size < atom.size && atom.size < 0x7ffff)
+        avio_skip(pb, atom.size - total_size);
+
+    c->atom_depth --;
     return 0;
 }
-static int mov_decryption_flky(unsigned char *flky,int box_size){
-    memset(mQNMp4Key.mFileKey, 0, sizeof(mQNMp4Key.mFileKey));
-    int nKeySize = box_size - 8;
-    for (int i = 0; i < nKeySize; i++)
-        mQNMp4Key.mFileKey[i] = flky[i];
-    mQNMp4Key.mFileKeySize = nKeySize;
-    return 0;
-}
-static void mov_qn_decryption_clear(void){
-    memset(mQNMp4Key.mComKey, 0, sizeof(mQNMp4Key.mComKey));
-    memset(mQNMp4Key.mFileKey, 0, sizeof(mQNMp4Key.mFileKey));
-    mQNMp4Key.mComKeySize = 0;
-    mQNMp4Key.mFileKeySize = 0;
-}
-static int is_qn_com_key_right(char * user_com_key, char * read_com_key){
-    if (user_com_key == NULL && !strcmp(mQNMp4Key.mComKey, "")) {
+
+static int is_qn_com_key_right(char * user_com_key, QNMp4DecryptionKey * qn_com_key){
+    if (user_com_key == NULL && qn_com_key->mComKeySize == 0) {
         
     }
     else if(user_com_key == NULL){
         return AVERROR_QNCOMKEYERROR;
     }
-    else if (strcmp(read_com_key, user_com_key)) {
+    else if (strcmp(qn_com_key->mComKey, user_com_key)) {
         return AVERROR_QNCOMKEYERROR;
+    }
+    return 0;
+}
+static int is_qn_file_key_right(char * user_file_key, QNMp4DecryptionKey * qn_file_key){
+    if (user_file_key == NULL && qn_file_key->mFileKeySize == 0) {
+        
+    }
+    else if(user_file_key == NULL){
+        return AVERROR_QNFILEKEYERROR;
+    }
+    else if (strcmp(qn_file_key->mFileKey , user_file_key)) {
+        return AVERROR_QNFILEKEYERROR;
     }
     return 0;
 }
@@ -7050,12 +7191,6 @@ static int mov_read_default(MOVContext *c, AVIOContext *pb, MOVAtom atom)
         if (atom.size >= 8) {
             a.size = avio_rb32(pb);
             a.type = avio_rl32(pb);
-            if (a.type == MKTAG('c', 'p', 'k', 'y')) {
-                mov_decryption_cpky(pb->buf_ptr, (int)a.size);
-            }
-            if (a.type == MKTAG('f', 'l', 'k', 'y')) {
-                mov_decryption_flky(pb->buf_ptr, (int)a.size);
-            }
             if (((a.type == MKTAG('f','r','e','e') && c->moov_retry) ||
                   a.type == MKTAG('h','o','o','v')) &&
                 a.size >= 8 &&
@@ -7645,8 +7780,11 @@ fail:
 
 static int mov_read_header(AVFormatContext *s)
 {
-    //清理七牛前一个视频的加密数据
-    mov_qn_decryption_clear();
+    QNMp4DecryptionKey qn_mp4_key;
+    memset(qn_mp4_key.mComKey, 0, 16);
+    memset(qn_mp4_key.mFileKey, 0, 16);
+    qn_mp4_key.mComKeySize = 0;
+    qn_mp4_key.mFileKeySize = 0;
     MOVContext *mov = s->priv_data;
     AVIOContext *pb = s->pb;
     int j, err;
@@ -7671,17 +7809,23 @@ static int mov_read_header(AVFormatContext *s)
     do {
         if (mov->moov_retry)
             avio_seek(pb, 0, SEEK_SET);
-        if ((err = mov_read_default(mov, pb, atom)) < 0) {
+        if ((err = mov_read_default_qn(mov, pb, atom, &qn_mp4_key)) < 0) {
             av_log(s, AV_LOG_ERROR, "error reading header\n");
             goto fail;
         }
     } while ((pb->seekable & AVIO_SEEKABLE_NORMAL) && !mov->found_moov && !mov->moov_retry++);
     
     //判断七牛私有 comkey 是否正确，不正确返回错误码 AVERROR_QNCOMKEYERROR
-    if (is_qn_com_key_right(mov->qn_decryption_key, mQNMp4Key.mComKey)) {
+    if (is_qn_com_key_right(mov->qn_decryption_com_key, &qn_mp4_key)) {
         av_log(mov->fc, AV_LOG_DEBUG, "the mp4 QN comp key is error!\n");
-//        return AVERROR_QNCOMKEYERROR;
         err = AVERROR_QNCOMKEYERROR;
+        goto fail;
+    }
+    
+    //判断七牛私有 comkey 是否正确，不正确返回错误码 AVERROR_QNFILEKEYERROR
+    if (is_qn_file_key_right(mov->qn_decryption_file_key, &qn_mp4_key)) {
+        av_log(mov->fc, AV_LOG_DEBUG, "the mp4 QN file key is error!\n");
+        err = AVERROR_QNFILEKEYERROR;
         goto fail;
     }
     if (!mov->found_moov) {
@@ -7979,14 +8123,14 @@ static int get_eia608_packet(AVIOContext *pb, AVPacket *pkt, int size)
 
 
 
-static void mov_qn_file_key_decryption(AVPacket *pkt, int skip){
+static void mov_qn_file_key_decryption(AVPacket *pkt, int skip, char *mFileKey){
     //        printf("pkt->size: %d \n",pkt->size);
     if (skip != 0) {
-        long long nKeySize = mQNMp4Key.mFileKeySize;
+        long long nKeySize = strlen(mFileKey);
         for (int i = 0; i < pkt->size; i++)
         {
             for (int j = 0; j < nKeySize; j++){
-                pkt->data[i + skip] = pkt->data[i + skip] ^ (mQNMp4Key.mFileKey[j] + (nKeySize - j));
+                pkt->data[i + skip] = pkt->data[i + skip] ^ (mFileKey[j] + (nKeySize - j));
             }
             pkt->data[i] = pkt->data[i + skip];
         }
@@ -8038,10 +8182,10 @@ static int mov_read_packet(AVFormatContext *s, AVPacket *pkt)
             goto retry;
         }
         //每一帧都需要移除开头混入的加密字符串，skip 跳过的长度，即 8+comkeysize + 8 + filekeysize
-        //mFileKeySize或mComKeySize 为 0 则认为该视频未加密，则无需skip
+        //qn_decryption_com_key 和 qn_decryption_file_key 都存在则认为该视频加密了
         int skip = 0;
-        if (mQNMp4Key.mFileKeySize != 0 || mQNMp4Key.mComKeySize != 0) {
-            skip = mQNMp4Key.mFileKeySize + mQNMp4Key.mComKeySize + 16;
+        if (mov->qn_decryption_com_key != NULL && mov->qn_decryption_file_key != NULL) {
+            skip = strlen(mov->qn_decryption_com_key) + strlen(mov->qn_decryption_file_key) + 16;
         }
         if (st->codecpar->codec_id == AV_CODEC_ID_EIA_608 && sample->size > 8)
             ret = get_eia608_packet(sc->pb, pkt, sample->size);
@@ -8054,7 +8198,7 @@ static int mov_read_packet(AVFormatContext *s, AVPacket *pkt)
             return ret;
         }
         //对 MP4 进行解加密
-        mov_qn_file_key_decryption(pkt, skip);
+        mov_qn_file_key_decryption(pkt, skip, mov->qn_decryption_file_key);
 #if CONFIG_DV_DEMUXER
         if (mov->dv_demux && sc->dv_audio_container) {
             AVBufferRef *buf = pkt->buf;
@@ -8336,7 +8480,8 @@ static const AVOption mov_options[] = {
     { "decryption_key", "The media decryption key (hex)", OFFSET(decryption_key), AV_OPT_TYPE_BINARY, .flags = AV_OPT_FLAG_DECODING_PARAM },
     { "enable_drefs", "Enable external track support.", OFFSET(enable_drefs), AV_OPT_TYPE_BOOL,
         {.i64 = 0}, 0, 1, FLAGS },
-    { "qn_decryption_key", "The media QN private decryption key", OFFSET(qn_decryption_key), AV_OPT_TYPE_STRING, .flags = AV_OPT_FLAG_DECODING_PARAM },
+    { "qn_decryption_com_key", "The media QN private decryption com key", OFFSET(qn_decryption_com_key), AV_OPT_TYPE_STRING, .flags = AV_OPT_FLAG_DECODING_PARAM },
+    { "qn_decryption_file_key", "The media QN private decryption file key", OFFSET(qn_decryption_file_key), AV_OPT_TYPE_STRING, .flags = AV_OPT_FLAG_DECODING_PARAM },
 
     { NULL },
 };
