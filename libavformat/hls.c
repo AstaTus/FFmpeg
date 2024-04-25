@@ -806,12 +806,12 @@ static int parse_playlist(HLSContext *c, const char *url,
                 key_type = KEY_AES_128;
             if (!strcmp(info.method, "SAMPLE-AES"))
                 key_type = KEY_SAMPLE_AES;
-				
+
             if (!strncmp(info.iv, "0x", 2) || !strncmp(info.iv, "0X", 2)) {
                 ff_hex_to_data(iv, info.iv + 2);
                 has_iv = 1;
             }
-			
+
             av_strlcpy(key, info.uri, sizeof(key));
 			if(!memcmp(info.method, "QINIU-PROTECTION", strlen("QINIU-PROTECTION"))) {
                 key_type = KEY_QINIU_PROTECTION;
@@ -2204,7 +2204,6 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
 {
     HLSContext *c = s->priv_data;
     int ret, i, minplaylist = -1;
-    int64_t timestamp = AV_NOPTS_VALUE;//add
     recheck_discard_flags(s, c->first_packet);
     c->first_packet = 0;
 
@@ -2245,18 +2244,13 @@ static int hls_read_packet(AVFormatContext *s, AVPacket *pkt)
                         break;
                     }
 
-                    if (timestamp == AV_NOPTS_VALUE) {
-                        find_timestamp_in_seq_no(pls,&timestamp,pls->cur_seq_no);//add
-                    }
                     tb = get_timebase(pls);
-                    ts_diff = timestamp + av_rescale_rnd(pls->pkt->dts, AV_TIME_BASE,
+                    ts_diff = av_rescale_rnd(pls->pkt->dts, AV_TIME_BASE,
                                             tb.den, AV_ROUND_DOWN) -
                             pls->seek_timestamp;
-//                    if (ts_diff >= 0 && (pls->seek_flags  & AVSEEK_FLAG_ANY ||
-//                                        pls->pkt->flags & AV_PKT_FLAG_KEY)) {
-                    if (ts_diff >= 0) {
+                    if (ts_diff >= 0 && (pls->seek_flags  & AVSEEK_FLAG_ANY ||
+                                        pls->pkt->flags & AV_PKT_FLAG_KEY)) {
                         pls->seek_timestamp = AV_NOPTS_VALUE;
-//                        av_log(c->ctx, AV_LOG_DEBUG, "hls:ts_diff>0\n");
                         break;
                     }
                 }
