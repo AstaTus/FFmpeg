@@ -22,6 +22,9 @@
 #define AVUTIL_AVPROTOCOL_EVENT_H
 
 #include "libavutil/log.h"
+#include <stdint.h>
+#include <libavutil/mem.h>
+
 
 
 #define AVPROTOCOL_EVENT_START_OPEN         1
