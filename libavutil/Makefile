@@ -92,7 +92,7 @@ HEADERS = adler32.h                                                     \
           tea.h                                                         \
           tx.h                                                          \
           film_grain_params.h                                           \
-          video_hint.h
+          video_hint.h													\
           avprotocol_event_dispatcher.h									\
 
 ARCH_HEADERS = bswap.h                                                  \
