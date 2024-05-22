@@ -1045,10 +1045,8 @@ int ffio_fdopen(AVIOContext **s, URLContext *h, AVDictionary **options)
     ((FFIOContext*)(*s))->short_seek_get = ffurl_get_short_seek;
     (*s)->av_class = &ff_avio_class;
 
-    if (av_opt_set_dict(*s, options) < 0)
-        goto fail;
+    return av_opt_set_dict(*s, options);
 
-    return 0;
 }
 
 URLContext* ffio_geturlcontext(AVIOContext *s)

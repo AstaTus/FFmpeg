@@ -8837,15 +8837,13 @@ static int mov_read_header(AVFormatContext *s)
     //判断七牛私有 comkey 是否正确，不正确返回错误码 AVERROR_QNCOMKEYERROR
     if (is_qn_com_key_right(mov->qn_decryption_com_key, &qn_mp4_key)) {
         av_log(mov->fc, AV_LOG_DEBUG, "the mp4 QN comp key is error!\n");
-        err = AVERROR_QNCOMKEYERROR;
-        goto fail;
+        return AVERROR_QNCOMKEYERROR;
     }
 
     //判断七牛私有 comkey 是否正确，不正确返回错误码 AVERROR_QNFILEKEYERROR
     if (is_qn_file_key_right(mov->qn_decryption_file_key, &qn_mp4_key)) {
         av_log(mov->fc, AV_LOG_DEBUG, "the mp4 QN file key is error!\n");
-        err = AVERROR_QNFILEKEYERROR;
-        goto fail;
+        return AVERROR_QNFILEKEYERROR;
     }
     if (!mov->found_moov) {
         av_log(s, AV_LOG_ERROR, "moov atom not found\n");
@@ -9558,7 +9556,6 @@ static const AVOption mov_options[] = {
         {.i64 = 0}, 0, 1, FLAGS },
     { "max_stts_delta", "treat offsets above this value as invalid", OFFSET(max_stts_delta), AV_OPT_TYPE_INT, {.i64 = UINT_MAX-48000*10 }, 0, UINT_MAX, .flags = AV_OPT_FLAG_DECODING_PARAM },
     { "interleaved_read", "Interleave packets from multiple tracks at demuxer level", OFFSET(interleaved_read), AV_OPT_TYPE_BOOL, {.i64 = 1 }, 0, 1, .flags = AV_OPT_FLAG_DECODING_PARAM },
-    { "qn_decryption_key", "The media QN private decryption key", OFFSET(qn_decryption_key), AV_OPT_TYPE_STRING, .flags = AV_OPT_FLAG_DECODING_PARAM },
     { "qn_decryption_com_key", "The media QN private decryption com key", OFFSET(qn_decryption_com_key), AV_OPT_TYPE_STRING, .flags = AV_OPT_FLAG_DECODING_PARAM },
     { "qn_decryption_file_key", "The media QN private decryption file key", OFFSET(qn_decryption_file_key), AV_OPT_TYPE_STRING, .flags = AV_OPT_FLAG_DECODING_PARAM },
 
