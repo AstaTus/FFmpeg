@@ -2793,6 +2793,11 @@ static const AVPixFmtDescriptor av_pix_fmt_descriptors[AV_PIX_FMT_NB] = {
         },
         .flags = AV_PIX_FMT_FLAG_PLANAR,
     },
+
+    [AV_PIX_FMT_OH] = {
+        .name = "oh",
+        .flags = AV_PIX_FMT_FLAG_HWACCEL,
+    }
 };
 
 static const char * const color_range_names[] = {

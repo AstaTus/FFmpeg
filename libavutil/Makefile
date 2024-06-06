@@ -45,12 +45,14 @@ HEADERS = adler32.h                                                     \
           hwcontext_drm.h                                               \
           hwcontext_dxva2.h                                             \
           hwcontext_qsv.h                                               \
-          hwcontext_mediacodec.h                                        \
+          hwcontext_oh.h                                        		\
+          hwcontext_vaapi.h                                             \
           hwcontext_opencl.h                                            \
           hwcontext_vaapi.h                                             \
           hwcontext_videotoolbox.h                                      \
           hwcontext_vdpau.h                                             \
           hwcontext_vulkan.h                                            \
+		  hwcontext_oh.h                                            	\
           imgutils.h                                                    \
           intfloat.h                                                    \
           intreadwrite.h                                                \
@@ -202,6 +204,7 @@ OBJS-$(CONFIG_VAAPI)                    += hwcontext_vaapi.o
 OBJS-$(CONFIG_VIDEOTOOLBOX)             += hwcontext_videotoolbox.o
 OBJS-$(CONFIG_VDPAU)                    += hwcontext_vdpau.o
 OBJS-$(CONFIG_VULKAN)                   += hwcontext_vulkan.o vulkan.o
+OBJS-$(CONFIG_OH)                   	+= hwcontext_oh.o
 
 OBJS-$(!CONFIG_VULKAN)                  += hwcontext_stub.o
 
@@ -224,6 +227,7 @@ SKIPHEADERS-$(CONFIG_VDPAU)            += hwcontext_vdpau.h
 SKIPHEADERS-$(CONFIG_VULKAN)           += hwcontext_vulkan.h vulkan.h   \
                                           vulkan_functions.h            \
                                           vulkan_loader.h
+SKIPHEADERS-$(CONFIG_OH)           	   += hwcontext_oh.h   				\
 
 TESTPROGS = adler32                                                     \
             aes                                                         \

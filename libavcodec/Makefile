@@ -125,6 +125,7 @@ OBJS-$(CONFIG_LSP)                     += lsp.o
 OBJS-$(CONFIG_LZF)                     += lzf.o
 OBJS-$(CONFIG_ME_CMP)                  += me_cmp.o
 OBJS-$(CONFIG_MEDIACODEC)              += mediacodecdec_common.o mediacodec_surface.o mediacodec_wrapper.o mediacodec_sw_buffer.o
+OBJS-$(CONFIG_OH)				   += oh_video_decoder.o oh_video_decoder_common.o oh_video_decoder_internal_buffer.o
 OBJS-$(CONFIG_MPEG_ER)                 += mpeg_er.o
 OBJS-$(CONFIG_MPEGAUDIO)               += mpegaudio.o mpegaudiodec_common.o \
                                           mpegaudiodata.o
@@ -407,6 +408,7 @@ OBJS-$(CONFIG_H264_AMF_ENCODER)        += amfenc_h264.o
 OBJS-$(CONFIG_H264_CUVID_DECODER)      += cuviddec.o
 OBJS-$(CONFIG_H264_MEDIACODEC_DECODER) += mediacodecdec.o
 OBJS-$(CONFIG_H264_MEDIACODEC_ENCODER) += mediacodecenc.o
+OBJS-$(CONFIG_H264_OH_DECODER)		   += oh_video_decoder.o
 OBJS-$(CONFIG_H264_MF_ENCODER)         += mfenc.o mf_utils.o
 OBJS-$(CONFIG_H264_MMAL_DECODER)       += mmaldec.o
 OBJS-$(CONFIG_H264_NVENC_ENCODER)      += nvenc_h264.o nvenc.o
@@ -433,6 +435,8 @@ OBJS-$(CONFIG_HEVC_AMF_ENCODER)        += amfenc_hevc.o
 OBJS-$(CONFIG_HEVC_CUVID_DECODER)      += cuviddec.o
 OBJS-$(CONFIG_HEVC_MEDIACODEC_DECODER) += mediacodecdec.o
 OBJS-$(CONFIG_HEVC_MEDIACODEC_ENCODER) += mediacodecenc.o
+OBJS-$(CONFIG_HEVC_OH_DECODER)		   += oh_video_decoder.o
+
 OBJS-$(CONFIG_HEVC_MF_ENCODER)         += mfenc.o mf_utils.o
 OBJS-$(CONFIG_HEVC_NVENC_ENCODER)      += nvenc_hevc.o nvenc.o
 OBJS-$(CONFIG_HEVC_QSV_DECODER)        += qsvdec.o
@@ -1297,6 +1301,8 @@ SKIPHEADERS-$(CONFIG_LIBJXL)           += libjxl.h
 SKIPHEADERS-$(CONFIG_LIBVPX)           += libvpx.h
 SKIPHEADERS-$(CONFIG_LIBWEBP_ENCODER)  += libwebpenc_common.h
 SKIPHEADERS-$(CONFIG_MEDIACODEC)       += mediacodecdec_common.h mediacodec_surface.h mediacodec_wrapper.h mediacodec_sw_buffer.h
+SKIPHEADERS-$(CONFIG_OH)          += oh_video_decoder_buffer.h oh_video_decoder_common.h
+
 SKIPHEADERS-$(CONFIG_MEDIAFOUNDATION)  += mf_utils.h
 SKIPHEADERS-$(CONFIG_NVDEC)            += nvdec.h
 SKIPHEADERS-$(CONFIG_NVENC)            += nvenc.h

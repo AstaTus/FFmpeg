@@ -308,6 +308,7 @@ External library support:
   --enable-mbedtls         enable mbedTLS, needed for https support
                            if openssl, gnutls or libtls is not used [no]
   --enable-mediacodec      enable Android MediaCodec support [no]
+  --enable-oh         	   enable Harmony decoder and encoder support [no]
   --enable-mediafoundation enable encoding via MediaFoundation [auto]
   --disable-metal          disable Apple Metal framework [autodetect]
   --enable-libmysofa       enable libmysofa, needed for sofalizer filter [no]
@@ -1907,6 +1908,7 @@ EXTERNAL_LIBRARY_LIST="
     libzvbi
     lv2
     mediacodec
+	oh
     openal
     opengl
     openssl
@@ -3223,6 +3225,8 @@ h264_mediacodec_decoder_deps="mediacodec"
 h264_mediacodec_decoder_select="h264_mp4toannexb_bsf h264_parser"
 h264_mediacodec_encoder_deps="mediacodec"
 h264_mediacodec_encoder_select="h264_metadata"
+h264_oh_decoder_deps="oh"
+h264_oh_decoder_select="h264_mp4toannexb_bsf h264_parser"
 h264_mf_encoder_deps="mediafoundation"
 h264_mmal_decoder_deps="mmal"
 h264_nvenc_encoder_deps="nvenc"
@@ -3243,6 +3247,8 @@ hevc_mediacodec_decoder_deps="mediacodec"
 hevc_mediacodec_decoder_select="hevc_mp4toannexb_bsf hevc_parser"
 hevc_mediacodec_encoder_deps="mediacodec"
 hevc_mediacodec_encoder_select="hevc_metadata"
+hevc_oh_decoder_deps="oh"
+hevc_oh_decoder_select="hevc_mp4toannexb_bsf hevc_parser"
 hevc_mf_encoder_deps="mediafoundation"
 hevc_nvenc_encoder_deps="nvenc"
 hevc_nvenc_encoder_select="atsc_a53"
@@ -3893,7 +3899,7 @@ swscale_suggest="libm stdatomic"
 
 avcodec_extralibs="pthreads_extralibs iconv_extralibs dxva2_extralibs lcms2_extralibs"
 avfilter_extralibs="pthreads_extralibs"
-avutil_extralibs="d3d11va_extralibs mediacodec_extralibs nanosleep_extralibs pthreads_extralibs vaapi_drm_extralibs vaapi_x11_extralibs vaapi_win32_extralibs vdpau_x11_extralibs"
+avutil_extralibs="d3d11va_extralibs mediacodec_extralibs ohcodec_extralibs nanosleep_extralibs pthreads_extralibs vaapi_drm_extralibs vaapi_x11_extralibs vaapi_win32_extralibs vdpau_x11_extralibs"
 
 # programs
 ffmpeg_deps="avcodec avfilter avformat threads"
@@ -6868,6 +6874,7 @@ enabled mbedtls           && { check_pkg_config mbedtls mbedtls mbedtls/x509_crt
                                check_lib mbedtls mbedtls/ssl.h mbedtls_ssl_init -lmbedtls -lmbedx509 -lmbedcrypto ||
                                die "ERROR: mbedTLS not found"; }
 enabled mediacodec        && { enabled jni || die "ERROR: mediacodec requires --enable-jni"; }
+enabled oh        	  	  && { check_headers multimedia/player_framework/native_avcodec_base.h  || die "ERROR: ohcodec requires harmony"; }
 enabled mmal              && { check_lib mmal interface/mmal/mmal.h mmal_port_connect -lmmal_core -lmmal_util -lmmal_vc_client -lbcm_host ||
                                { ! enabled cross_compile &&
                                  add_cflags -isystem/opt/vc/include/ -isystem/opt/vc/include/interface/vmcs_host/linux -isystem/opt/vc/include/interface/vcos/pthreads -fgnu89-inline &&
