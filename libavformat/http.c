@@ -763,6 +763,10 @@ static int http_open(URLContext *h, const char *uri, int flags,
         sscanf(s->protocol_event_context_ptr_text, "%p", &s->protocol_event_dispatcher_context);
     }
 
+    if (options) {
+        av_dict_set(options, "protocol_event_dispatcher", s->protocol_event_context_ptr_text, 0);
+    }
+
     if( s->seekable == 1 )
         h->is_streamed = 0;
     else
