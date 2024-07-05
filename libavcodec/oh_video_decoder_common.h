@@ -51,6 +51,7 @@ typedef struct OHVideoDecoderContext {
     OH_AVCodec *codec;
     OH_AVFormat *format;
     OHVideoDecoderInternalBuffersGroup *buffers_group;
+    int32_t codec_error_code;
 
     void *native_window;
 

@@ -111,14 +111,16 @@ static void ff_oh_video_decoder_unref(OHVideoDecoderContext *s) {
         }
 
         s->native_window = NULL;
-
-        av_freep(&s->codec_name);
+        s->codec_name = NULL;
         av_freep(&s);
     }
 }
 
-static void on_error(OH_AVCodec *codec, int32_t errorCode, void *user_data) {
+static void on_error(OH_AVCodec *codec, int32_t error_code, void *user_data) {
+    OHVideoDecoderContext *s = (OHVideoDecoderContext *)(user_data);
+//    s->codec_error_code = error_code;
 
+    av_log(NULL, AV_LOG_ERROR, "oh video decoder error code=%d\n", error_code);
 }
 
 // 解码数据流变化回调OH_AVCodecOnStreamChanged实现
@@ -127,7 +129,6 @@ static void on_stream_changed(OH_AVCodec *codec, OH_AVFormat *format, void *user
     OHVideoDecoderContext *s = (OHVideoDecoderContext *)(user_data);
     OH_AVFormat_Copy(s->format, format);
     format_to_oh_video_decoder_context(s->avctx, s, format);
-    //TODO stream changed fill params to MediaCodecDecContext
 }
 
 // 解码输入回调OH_AVCodecOnNeedInputBuffer实现
@@ -547,6 +548,8 @@ static int oh_decoder_flush_codec(AVCodecContext *avctx, OHVideoDecoderContext *
         av_log(avctx, AV_LOG_ERROR, "Failed to restart codec after flush codec error=%d\n", error_code);
         return AVERROR_EXTERNAL;
     }
+    av_log(avctx, AV_LOG_DEBUG, "oh_decoder_flush_codec flush success\n");
+
     return 0;
 }
 
@@ -681,6 +684,11 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
     int64_t pts;
     OH_AVCodecBufferAttr codec_buffer_attr;
     OH_AVErrCode error_code;
+
+    if (s->codec_error_code != 0) {
+        av_log(avctx, AV_LOG_ERROR, "Decoder has been occur error code=%d\n", s->codec_error_code);
+        return AVERROR_EXTERNAL;
+    }
     if (s->flushing) {
         av_log(avctx, AV_LOG_ERROR, "Decoder is flushing and cannot accept new buffer "
                                     "until all output buffers have been released\n");
@@ -796,6 +804,11 @@ int ff_oh_video_decoder_receive(AVCodecContext *avctx, OHVideoDecoderContext *s,
     int status;
     OH_AVErrCode error_code;
     OH_AVCodecBufferAttr codec_buffer_attr;
+
+    if (s->codec_error_code != 0) {
+        av_log(avctx, AV_LOG_ERROR, "Decoder has been occur error code=%d\n", s->codec_error_code);
+        return AVERROR_EXTERNAL;
+    }
 
     if (s->draining && s->eos) {
         return AVERROR_EOF;
