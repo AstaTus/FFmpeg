@@ -91,6 +91,7 @@ static inline void queue_clear(OHVideoDecoderInternalBufferQueue * queue) {
 
     queue->head_node = NULL;
     queue->tail_node = NULL;
+    queue->length = 0;
 
 }
 
