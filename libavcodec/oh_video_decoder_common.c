@@ -162,7 +162,7 @@ static void oh_video_decoder_buffer_release(void *opaque, uint8_t *data)
     if (!released && (ctx->delay_flush || buffer->serial == atomic_load(&ctx->serial))) {
         atomic_fetch_sub(&ctx->hw_buffer_count, 1);
         av_log(NULL, AV_LOG_DEBUG,
-               "Releasing output buffer %zd (%p) ts=%"PRId64" on free() [%d pending]\n",
+               "harmony-decoder:Releasing output buffer %zd (%p) ts=%"PRId64" on free() [%d pending]\n",
                 buffer->index, buffer, buffer->pts, atomic_load(&ctx->hw_buffer_count));
         OH_VideoDecoder_RenderOutputBuffer(ctx->codec, buffer->index);
     }
@@ -231,7 +231,7 @@ static int oh_video_decoder_wrap_hw_buffer(AVCodecContext *avctx,
 
     atomic_fetch_add(&s->hw_buffer_count, 1);
     av_log(avctx, AV_LOG_DEBUG,
-           "Wrapping output buffer %zd (%p) ts=%"PRId64" [%d pending]\n",
+           "harmony-decoder:Wrapping output buffer %zd (%p) ts=%"PRId64" [%d pending]\n",
             buffer->index, buffer, buffer->pts, atomic_load(&s->hw_buffer_count));
 
     return 0;
@@ -548,7 +548,7 @@ static int oh_decoder_flush_codec(AVCodecContext *avctx, OHVideoDecoderContext *
         av_log(avctx, AV_LOG_ERROR, "Failed to restart codec after flush codec error=%d\n", error_code);
         return AVERROR_EXTERNAL;
     }
-    av_log(avctx, AV_LOG_DEBUG, "oh_decoder_flush_codec flush success\n");
+    av_log(avctx, AV_LOG_DEBUG, "harmony-decoder:oh_decoder_flush_codec flush success\n");
 
     return 0;
 }
@@ -711,11 +711,13 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
         error_code = OH_AVBuffer_GetBufferAttr(input_buffer->buffer, &codec_buffer_attr);
         if (error_code != AV_ERR_OK) {
             av_log(avctx, AV_LOG_ERROR, "Failed to get decode buffer attr=%d\n", error_code);
+            oh_video_decoder_internal_buffer_destroy(input_buffer);
             return AVERROR_EXTERNAL;
         }
         data = OH_AVBuffer_GetAddr(input_buffer->buffer);
         if (data == NULL) {
             av_log(avctx, AV_LOG_ERROR, "Failed to get decode buffer addr=NULL\n");
+            oh_video_decoder_internal_buffer_destroy(input_buffer);
             return AVERROR_EXTERNAL;
         }
 
@@ -738,12 +740,14 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
             error_code = OH_AVBuffer_SetBufferAttr(input_buffer->buffer, &codec_buffer_attr);
             if (error_code != AV_ERR_OK) {
                 av_log(avctx, AV_LOG_ERROR, "Failed to set buffer attr error_code=%d\n", error_code);
+                oh_video_decoder_internal_buffer_destroy(input_buffer);
                 return AVERROR_EXTERNAL;
             }
 
             error_code = OH_VideoDecoder_PushInputBuffer(s->codec, input_buffer->buffer_index);
             if (error_code != AV_ERR_OK) {
                 av_log(avctx, AV_LOG_ERROR, "Failed to push input buffer error_code=%d\n", error_code);
+                oh_video_decoder_internal_buffer_destroy(input_buffer);
                 return AVERROR_EXTERNAL;
             }
 
@@ -751,6 +755,7 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
                    "Queued empty EOS input buffer %zd with flags=%d\n", input_buffer->buffer_index, codec_buffer_attr.flags);
 
             s->draining = 1;
+            oh_video_decoder_internal_buffer_destroy(input_buffer);
             return 0;
         }
 
@@ -771,6 +776,7 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
         error_code = OH_AVBuffer_SetBufferAttr(input_buffer->buffer, &codec_buffer_attr);
         if (error_code != AV_ERR_OK) {
             av_log(avctx, AV_LOG_ERROR, "Failed to set buffer attr error_code=%d\n", error_code);
+            oh_video_decoder_internal_buffer_destroy(input_buffer);
             return AVERROR_EXTERNAL;
         }
 
@@ -780,13 +786,14 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
         error_code = OH_VideoDecoder_PushInputBuffer(s->codec, input_buffer->buffer_index);
         if (error_code != AV_ERR_OK) {
             av_log(avctx, AV_LOG_ERROR, "Failed to push input buffer error_code=%d\n", error_code);
+            oh_video_decoder_internal_buffer_destroy(input_buffer);
             return AVERROR_EXTERNAL;
         }
 
         av_log(avctx, AV_LOG_TRACE,
-               "Queued input buffer %zd size=%zd ts=%"
-        PRIi64
-        "\n", input_buffer->buffer_index, size, pts);
+               "harmony-decoder:Queued input buffer %zd size=%zd ts=%" PRIi64"\n", input_buffer->buffer_index, size, pts);
+
+        oh_video_decoder_internal_buffer_destroy(input_buffer);
     }
 
     if (offset == 0)
@@ -819,6 +826,7 @@ int ff_oh_video_decoder_receive(AVCodecContext *avctx, OHVideoDecoderContext *s,
         error_code = OH_AVBuffer_GetBufferAttr(output_buffer->buffer, &codec_buffer_attr);
         if (error_code != AV_ERR_OK) {
             av_log(avctx, AV_LOG_ERROR, "Failed to pop output buffer error_code=%d\n", error_code);
+            oh_video_decoder_internal_buffer_destroy(output_buffer);
             return AVERROR_EXTERNAL;
         }
 
@@ -841,6 +849,7 @@ int ff_oh_video_decoder_receive(AVCodecContext *avctx, OHVideoDecoderContext *s,
 
                 if ((ret = oh_video_decoder_wrap_hw_buffer(avctx, s, output_buffer->buffer_index, &codec_buffer_attr, frame)) < 0) {
                     av_log(avctx, AV_LOG_ERROR, "Failed to wrap OH video decoder buffer\n");
+                    oh_video_decoder_internal_buffer_destroy(output_buffer);
                     return ret;
                 }
             } else {
@@ -848,17 +857,20 @@ int ff_oh_video_decoder_receive(AVCodecContext *avctx, OHVideoDecoderContext *s,
                 if ((ret = oh_video_decoder_wrap_sw_buffer(avctx, s, output_buffer->buffer,
                                                            output_buffer->buffer_index, &codec_buffer_attr, frame)) < 0) {
                     av_log(avctx, AV_LOG_ERROR, "Failed to wrap MediaCodec buffer\n");
+                    oh_video_decoder_internal_buffer_destroy(output_buffer);
                     return ret;
                 }
 
                 error_code = OH_VideoDecoder_FreeOutputBuffer(s->codec, output_buffer->buffer_index);
                 if (error_code != AV_ERR_OK) {
                     av_log(avctx, AV_LOG_ERROR, "Failed to free output buffer error_code=%d\n", error_code);
+                    oh_video_decoder_internal_buffer_destroy(output_buffer);
                     return AVERROR_EXTERNAL;
                 }
             }
 
             s->output_buffer_count++;
+            oh_video_decoder_internal_buffer_destroy(output_buffer);
             return 0;
         } 
 //         else {

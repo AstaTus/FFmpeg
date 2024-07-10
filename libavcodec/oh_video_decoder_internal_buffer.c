@@ -23,7 +23,7 @@
 #include "oh_video_decoder_internal_buffer.h"
 #include <libavutil/mem.h>
 #include <unistd.h>
-
+#include <libavutil/log.h>
 OHVideoDecoderInternalBuffer * oh_video_decoder_internal_buffer_create(uint32_t index, OH_AVBuffer * buffer) {
     if (buffer == NULL) {
         return NULL;
@@ -224,8 +224,9 @@ size_t oh_video_decoder_internal_buffer_group_push_input_buffer(OHVideoDecoderIn
     }
     pthread_mutex_lock(&group->input_queue_mutex);
 
-    size_t ret = queue_push_buffer(group->input_queue, buffer);
-
+    ssize_t ret = queue_push_buffer(group->input_queue, buffer);
+    av_log(NULL, AV_LOG_DEBUG,
+           "harmony-decoder:push_input_buffer index=%d\n",buffer->buffer_index);
     pthread_cond_signal(&group->input_queue_cond);
 
     pthread_mutex_unlock(&group->input_queue_mutex);
@@ -281,7 +282,8 @@ size_t oh_video_decoder_internal_buffer_group_push_output_buffer(OHVideoDecoderI
     pthread_mutex_lock(&group->output_queue_mutex);
 
     size_t ret = queue_push_buffer(group->output_queue, buffer);
-
+    av_log(NULL, AV_LOG_DEBUG,
+           "harmony-decoder:push_output_buffer index=%d\n",buffer->buffer_index);
     pthread_cond_signal(&group->output_queue_cond);
 
     pthread_mutex_unlock(&group->output_queue_mutex);

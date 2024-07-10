@@ -39,6 +39,7 @@
 #include "mediacodec_sw_buffer.h"
 #include "mediacodec_wrapper.h"
 #include "mediacodecdec_common.h"
+#include "hardware_decode_sei_context.h"
 
 /**
  * OMX.k3.video.decoder.avc, OMX.NVIDIA.* OMX.SEC.avc.dec and OMX.google
@@ -167,6 +168,11 @@ static void ff_mediacodec_dec_unref(MediaCodecDecContext *s)
             s->surface = NULL;
         }
 
+        if (s->hw_decode_sei_context) {
+            av_freep(&(s->hw_decode_sei_context));
+            s->hw_decode_sei_context = NULL;
+        }
+
         av_freep(&s->codec_name);
         av_freep(&s);
     }
@@ -248,6 +254,7 @@ static int mediacodec_wrap_hw_buffer(AVCodecContext *avctx,
 
     frame->data[3] = (uint8_t *)buffer;
 
+    copy_SEI_data_from_hardware_decode_SEI_context(s->hw_decode_sei_context, frame);
     atomic_fetch_add(&s->hw_buffer_count, 1);
     av_log(avctx, AV_LOG_DEBUG,
             "Wrapping output buffer %zd (%p) ts=%"PRId64" [%d pending]\n",
@@ -300,7 +307,7 @@ static int mediacodec_wrap_sw_buffer(AVCodecContext *avctx,
         frame->pts = info->presentationTimeUs;
     }
     frame->pkt_dts = AV_NOPTS_VALUE;
-
+    copy_SEI_data_from_hardware_decode_SEI_context(s->hw_decode_sei_context, frame);
     av_log(avctx, AV_LOG_TRACE,
             "Frame: width=%d stride=%d height=%d slice-height=%d "
             "crop-top=%d crop-bottom=%d crop-left=%d crop-right=%d encoder=%s "
@@ -526,6 +533,8 @@ int ff_mediacodec_dec_init(AVCodecContext *avctx, MediaCodecDecContext *s,
         }
     }
 
+    s->hw_decode_sei_context = av_mallocz(sizeof(HardwareDecodeSEIContext));
+
     profile = ff_AMediaCodecProfile_getProfileFromAVCodecContext(avctx);
     if (profile < 0) {
         av_log(avctx, AV_LOG_WARNING, "Unsupported or unknown profile\n");
@@ -627,6 +636,14 @@ int ff_mediacodec_dec_send(AVCodecContext *avctx, MediaCodecDecContext *s,
     if (s->draining && s->eos) {
         return AVERROR_EOF;
     }
+
+    //parse SEI DATA
+    if (avctx->codec_id == AV_CODEC_ID_H264) {
+        parse_h264_sei_data(s->hw_decode_sei_context, avctx, pkt);
+    } else if (avctx->codec_id == AV_CODEC_ID_H265) {
+        parse_hevc_sei_data(s->hw_decode_sei_context, avctx, pkt);
+    }
+
 
     while (offset < pkt->size || (need_draining && !s->draining)) {
         ssize_t index = s->current_input_buffer;

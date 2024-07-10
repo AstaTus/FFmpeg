@@ -45,6 +45,8 @@ typedef struct MediaCodecDecContext {
     FFAMediaCodec *codec;
     FFAMediaFormat *format;
 
+    void * hw_decode_sei_context;
+
     void *surface;
 
     int started;

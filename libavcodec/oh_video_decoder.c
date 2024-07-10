@@ -409,7 +409,7 @@ static int oh_video_decoder_receive_frame(AVCodecContext *avctx, AVFrame *frame)
                            "could not send entire packet in single input buffer (%d < %d)\n",
                            ret, s->buffered_pkt.size+ret);
                 }
-            } else if (ret < 0 && ret != AVERROR(EAGAIN)) {
+            } else if (ret < 0) {
                 return ret;
             }
 
@@ -444,8 +444,28 @@ static void oh_video_decoder_flush(AVCodecContext *avctx)
     OHVideoDecoderH264DecContext *s = avctx->priv_data;
 
     av_packet_unref(&s->buffered_pkt);
+    if(ff_oh_video_decoder_flush(avctx, s->ctx)) {
+        int ret;
+        switch (avctx->codec_id) {
+            case AV_CODEC_ID_H264:
+                ret = h264_set_extradata(avctx, s->ctx);
+                if (ret < 0) {
+                    av_log(avctx, AV_LOG_ERROR,
+                           "h264_set_extradata error ret=%d\n", ret);
+                }
+                break;
+            case AV_CODEC_ID_HEVC:
+                ret = hevc_set_extradata(avctx, s->ctx);
+                if (ret < 0) {
 
-    ff_oh_video_decoder_flush(avctx, s->ctx);
+                    av_log(avctx, AV_LOG_ERROR,
+                           "hevc_set_extradata error ret=%d\n", ret);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 static const AVCodecHWConfigInternal *const oh_video_decoder_hw_configs[] = {

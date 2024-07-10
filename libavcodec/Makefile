@@ -124,8 +124,8 @@ OBJS-$(CONFIG_LPC)                     += lpc.o
 OBJS-$(CONFIG_LSP)                     += lsp.o
 OBJS-$(CONFIG_LZF)                     += lzf.o
 OBJS-$(CONFIG_ME_CMP)                  += me_cmp.o
-OBJS-$(CONFIG_MEDIACODEC)              += mediacodecdec_common.o mediacodec_surface.o mediacodec_wrapper.o mediacodec_sw_buffer.o
-OBJS-$(CONFIG_OH)				   += oh_video_decoder.o oh_video_decoder_common.o oh_video_decoder_internal_buffer.o
+OBJS-$(CONFIG_MEDIACODEC)              += mediacodecdec_common.o mediacodec_surface.o mediacodec_wrapper.o mediacodec_sw_buffer.o hardware_decode_sei_context.o
+OBJS-$(CONFIG_OH)					   += oh_video_decoder.o oh_video_decoder_common.o oh_video_decoder_internal_buffer.o hardware_decode_sei_context.o
 OBJS-$(CONFIG_MPEG_ER)                 += mpeg_er.o
 OBJS-$(CONFIG_MPEGAUDIO)               += mpegaudio.o mpegaudiodec_common.o \
                                           mpegaudiodata.o
@@ -1300,8 +1300,8 @@ SKIPHEADERS-$(CONFIG_LIBAOM)           += libaom.h
 SKIPHEADERS-$(CONFIG_LIBJXL)           += libjxl.h
 SKIPHEADERS-$(CONFIG_LIBVPX)           += libvpx.h
 SKIPHEADERS-$(CONFIG_LIBWEBP_ENCODER)  += libwebpenc_common.h
-SKIPHEADERS-$(CONFIG_MEDIACODEC)       += mediacodecdec_common.h mediacodec_surface.h mediacodec_wrapper.h mediacodec_sw_buffer.h
-SKIPHEADERS-$(CONFIG_OH)          += oh_video_decoder_buffer.h oh_video_decoder_common.h
+SKIPHEADERS-$(CONFIG_MEDIACODEC)       += mediacodecdec_common.h mediacodec_surface.h mediacodec_wrapper.h mediacodec_sw_buffer.h hardware_decode_sei_context.h
+SKIPHEADERS-$(CONFIG_OH)          	   += oh_video_decoder_buffer.h oh_video_decoder_common.h ardware_decode_sei_context.h
 
 SKIPHEADERS-$(CONFIG_MEDIAFOUNDATION)  += mf_utils.h
 SKIPHEADERS-$(CONFIG_NVDEC)            += nvdec.h
