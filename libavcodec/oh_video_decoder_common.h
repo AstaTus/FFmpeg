@@ -55,6 +55,8 @@ typedef struct OHVideoDecoderContext {
 
     void *native_window;
 
+    void * hw_decode_sei_context;
+
     int started;
     int draining;
     int flushing;

@@ -41,6 +41,7 @@
 #include <multimedia/player_framework/native_avbuffer.h>
 #include <native_buffer/native_buffer.h>
 #include "oh_video_decoder_common.h"
+#include "hardware_decode_sei_context.h"
 
 //static struct {
 //    enum OH_TransferCharacteristic oh_transfer;
@@ -108,6 +109,11 @@ static void ff_oh_video_decoder_unref(OHVideoDecoderContext *s) {
         if (s->buffers_group) {
             oh_video_decoder_internal_buffer_group_destroy(s->buffers_group);
             s->buffers_group = NULL;
+        }
+
+        if (s->hw_decode_sei_context) {
+            av_freep(&(s->hw_decode_sei_context));
+            s->hw_decode_sei_context = NULL;
         }
 
         s->native_window = NULL;
@@ -253,6 +259,8 @@ static int oh_video_decoder_wrap_hw_buffer(AVCodecContext *avctx,
     buffer->pts = codec_buffer_attr->pts;
 
     frame->data[3] = (uint8_t *) buffer;
+
+    copy_SEI_data_from_hardware_decode_SEI_context(s->hw_decode_sei_context, frame);
 
     atomic_fetch_add(&s->hw_buffer_count, 1);
     av_log(avctx, AV_LOG_DEBUG,
@@ -614,6 +622,8 @@ int ff_oh_video_decoder_init(AVCodecContext *avctx,
         }
     }
 
+    s->hw_decode_sei_context = av_mallocz(sizeof(HardwareDecodeSEIContext));
+
     // 通过codecname创建解码器，应用有特殊需求，比如选择支持某种分辨率规格的解码器，可先查询capability，再根据codec name创建解码器。
     OH_AVCapability *pcapability = OH_AVCodec_GetCapability(mime, false);
     if (pcapability == NULL) {
@@ -728,6 +738,12 @@ int ff_oh_video_decoder_send(AVCodecContext *avctx, OHVideoDecoderContext *s,
         return AVERROR_EOF;
     }
 
+    if (avctx->codec_id == AV_CODEC_ID_H264) {
+        parse_h264_sei_data(s->hw_decode_sei_context, avctx, pkt);
+    } else if (avctx->codec_id == AV_CODEC_ID_H265) {
+        parse_hevc_sei_data(s->hw_decode_sei_context, avctx, pkt);
+    }
+    
     while (offset < pkt->size || (need_draining && !s->draining)) {
         OHVideoDecoderInternalBuffer *input_buffer = oh_video_decoder_internal_buffer_group_pop_input_buffer(s->buffers_group, 1000);
         if (input_buffer == NULL) {
