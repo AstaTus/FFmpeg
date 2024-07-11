@@ -40,6 +40,7 @@
 #include "hwconfig.h"
 #include "internal.h"
 #include "jni.h"
+#include "oh_video_decoder.h"
 #include "oh_video_decoder_common.h"
 
 typedef struct OHVideoDecoderH264DecContext {
@@ -524,3 +525,7 @@ DECLARE_OH_VDEC(h264, "H.264", AV_CODEC_ID_H264, "h264_mp4toannexb")
 //#if CONFIG_HEVC_OH_DECODER
 DECLARE_OH_VDEC(hevc, "H.265", AV_CODEC_ID_HEVC, "hevc_mp4toannexb")
 //#endif
+
+int av_oh_video_decoder_render_output_buffer(void *opaque) {
+    return ff_oh_video_decoder_render_output_buffer(opaque, NULL);
+}

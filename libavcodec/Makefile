@@ -18,6 +18,7 @@ HEADERS = ac3_parser.h                                                  \
           dxva2.h                                                       \
           jni.h                                                         \
           mediacodec.h                                                  \
+          oh_video_decoder.h                                            \
           packet.h                                                      \
           qsv.h                                                         \
           vdpau.h                                                       \

@@ -106,6 +106,9 @@ int ff_oh_video_decoder_close(AVCodecContext *avctx,
 int ff_oh_video_decoder_is_flushing(AVCodecContext *avctx,
                                     OHVideoDecoderContext *s);
 
+int ff_oh_video_decoder_render_output_buffer(void *opaque, uint8_t *data);
+
+
 typedef struct OHVideoDecoderBuffer {
 
     OHVideoDecoderContext *ctx;

@@ -151,6 +151,29 @@ static void on_new_output_buffer(OH_AVCodec *codec, uint32_t index, OH_AVBuffer 
     oh_video_decoder_internal_buffer_group_push_output_buffer(buffers_group, oh_video_decoder_internal_buffer_create(index, buffer));
 
 }
+int ff_oh_video_decoder_render_output_buffer(void *opaque, uint8_t *data) {
+    OHVideoDecoderBuffer *buffer = opaque;
+    OHVideoDecoderContext *ctx = buffer->ctx;
+    int released = atomic_fetch_add(&buffer->released, 1);
+    int ret = 0;
+    OH_AVErrCode error_code;
+    if (!released && (ctx->delay_flush || buffer->serial == atomic_load(&ctx->serial))) {
+        atomic_fetch_sub(&ctx->hw_buffer_count, 1);
+
+        error_code = OH_VideoDecoder_RenderOutputBuffer(ctx->codec, buffer->index);
+
+        av_log(NULL, error_code == AV_ERR_OK ? AV_LOG_DEBUG : AV_LOG_ERROR,
+               "harmony-decoder:Releasing output buffer %zd (%p) ts=%"PRId64" on free() [%d pending] error_code=%d\n",
+                buffer->index, buffer, buffer->pts, atomic_load(&ctx->hw_buffer_count), error_code);
+        if (error_code != AV_ERR_OK) {
+            ret = AVERROR_EXTERNAL;
+        } else {
+            ret = 0;
+        }
+    }
+
+    return ret;
+}
 
 
 static void oh_video_decoder_buffer_release(void *opaque, uint8_t *data)
@@ -158,13 +181,15 @@ static void oh_video_decoder_buffer_release(void *opaque, uint8_t *data)
     OHVideoDecoderBuffer *buffer = opaque;
     OHVideoDecoderContext *ctx = buffer->ctx;
     int released = atomic_load(&buffer->released);
-
+    int ret = 0;
+    OH_AVErrCode error_code;
     if (!released && (ctx->delay_flush || buffer->serial == atomic_load(&ctx->serial))) {
         atomic_fetch_sub(&ctx->hw_buffer_count, 1);
-        av_log(NULL, AV_LOG_DEBUG,
-               "harmony-decoder:Releasing output buffer %zd (%p) ts=%"PRId64" on free() [%d pending]\n",
-                buffer->index, buffer, buffer->pts, atomic_load(&ctx->hw_buffer_count));
-        OH_VideoDecoder_RenderOutputBuffer(ctx->codec, buffer->index);
+        error_code = OH_VideoDecoder_FreeOutputBuffer(ctx->codec, buffer->index);
+
+        av_log(NULL, error_code == AV_ERR_OK ? AV_LOG_DEBUG : AV_LOG_ERROR,
+               "harmony-decoder:Releasing output buffer %zd (%p) ts=%"PRId64" on free() [%d pending] error_code=%d\n",
+                buffer->index, buffer, buffer->pts, atomic_load(&ctx->hw_buffer_count), error_code);
     }
 
     ff_oh_video_decoder_unref(ctx);
