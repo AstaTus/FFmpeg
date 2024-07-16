@@ -263,7 +263,7 @@ static int hevc_set_extradata(AVCodecContext *avctx, OHVideoDecoderContext *s)
         memcpy(data + vps_data_size                , sps_data, sps_data_size);
         memcpy(data + vps_data_size + sps_data_size, pps_data, pps_data_size);
 
-        ff_oh_video_decoder_set_hevc_extradata(avctx, data, data_size);
+        ff_oh_video_decoder_set_hevc_extradata(s, data, data_size);
         av_freep(&data);
     } else {
         const int warn = is_nalff && avctx->codec_tag == MKTAG('h','v','c','1');
@@ -295,9 +295,9 @@ static av_cold int oh_video_decoder_init(AVCodecContext *avctx)
 
     switch (avctx->codec_id) {
         case AV_CODEC_ID_H264:
-        codec_mime = OH_AVCODEC_MIMETYPE_VIDEO_AVC;
-
-        break;
+            codec_mime = OH_AVCODEC_MIMETYPE_VIDEO_AVC;
+    
+            break;
         case AV_CODEC_ID_HEVC:
             codec_mime = OH_AVCODEC_MIMETYPE_VIDEO_HEVC;
             break;
