@@ -174,10 +174,10 @@ static int decode_buffering_period(H264SEIBufferingPeriod *h, GetBitContext *gb,
     const SPS *sps;
 
     sps_id = get_ue_golomb_31(gb);
-    if (sps_id > 31 || !ps->sps_list[sps_id]) {
+    if (ps == NULL || sps_id > 31 || !ps->sps_list[sps_id]) {
         av_log(logctx, AV_LOG_ERROR,
                "non-existing SPS %d referenced in buffering period\n", sps_id);
-        return sps_id > 31 ? AVERROR_INVALIDDATA : AVERROR_PS_NOT_FOUND;
+        return (sps_id > 31 || ps == NULL) ? AVERROR_INVALIDDATA : AVERROR_PS_NOT_FOUND;
     }
     sps = ps->sps_list[sps_id];
 
